@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>拼音小游戏</title>
     <style>
-        /* ---------- 全局样式 ---------- */
+        /* ===== 全局样式 ===== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -24,12 +24,51 @@
             border-radius: 24px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             padding: 20px 16px 30px;
+            position: relative;
+            min-height: 80vh;
         }
-        h1 {
-            text-align: center;
-            font-size: 28px;
+
+        /* ===== 开始界面 ===== */
+        #startPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        #startPage h1 {
+            font-size: 32px;
             color: #2c3e50;
-            margin: 0 0 4px 0;
+            margin-bottom: 8px;
+        }
+        #startPage p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .start-btn {
+            width: 80%;
+            padding: 18px 0;
+            margin: 10px 0;
+            border: none;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            background: #7fb3d5;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .start-btn:active { transform: scale(0.95); }
+        .start-btn.words { background: #5bc0de; }
+        .start-btn.sentences { background: #5cb85c; }
+        .start-btn.articles { background: #f0ad4e; }
+
+        /* ===== 游戏界面 ===== */
+        #gamePage {
+            display: none;
+            flex-direction: column;
         }
         .mode-title {
             text-align: center;
@@ -38,7 +77,6 @@
             color: #4a90d9;
             margin-bottom: 16px;
         }
-        /* 字符网格 */
         .char-grid {
             display: flex;
             flex-wrap: wrap;
@@ -75,7 +113,6 @@
         .char-input:focus {
             border-color: #4a90d9;
         }
-        /* 按钮区域 */
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -105,7 +142,7 @@
         .btn-orange { background: #e67e22; }
         .btn-home { background: #95a5a6; }
 
-        /* 得分弹窗（覆盖层） */
+        /* ===== 弹窗样式（得分/错题） ===== */
         .overlay {
             display: none;
             position: fixed;
@@ -151,7 +188,6 @@
         }
         .modal .btn-group-modal .btn { flex: 1; min-width: 80px; }
 
-        /* 错题本弹窗 */
         .wrong-overlay {
             display: none;
             position: fixed;
@@ -183,27 +219,32 @@
         .wrong-item .correct { color: #5cb85c; }
         .wrong-item .user { color: #d9534f; }
 
-        /* 响应式 */
         @media (max-width: 480px) {
             .char-input { width: 52px; height: 40px; font-size: 18px; }
             .btn { font-size: 14px; padding: 10px 14px; }
+            .start-btn { font-size: 18px; padding: 14px 0; }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>📚 拼音小游戏</h1>
-    <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
 
-    <!-- 字符网格 -->
-    <div id="charGrid" class="char-grid">
-        <!-- 动态生成 -->
+    <!-- ===== 开始界面 ===== -->
+    <div id="startPage">
+        <h1>📚 拼音小游戏</h1>
+        <p>选择一种模式，开始挑战吧！</p>
+        <button class="start-btn words" data-mode="words">📝 词语练习</button>
+        <button class="start-btn sentences" data-mode="sentences">📖 句子练习</button>
+        <button class="start-btn articles" data-mode="articles">📄 文章练习</button>
     </div>
 
-    <!-- 按钮组 -->
-    <div class="btn-group" id="btnGroup">
-        <!-- 动态生成 -->
+    <!-- ===== 游戏界面 ===== -->
+    <div id="gamePage">
+        <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
+        <div id="charGrid" class="char-grid"></div>
+        <div class="btn-group" id="btnGroup"></div>
     </div>
+
 </div>
 
 <!-- 得分弹窗 -->
@@ -1161,15 +1202,17 @@ const ARTICLES_POOL = [
 // =====================================================================
 //  游戏状态（与 Python 版对应）
 // =====================================================================
-let currentMode = 'words';          // 'words' | 'sentences' | 'articles'
+let currentMode = 'words';
 let batchItems = [];
 let batchIndex = 0;
 let batchAnswers = [];
 const BATCH_SIZE = { words: 5, sentences: 3 };
 
 // DOM 引用
-const gridEl = document.getElementById('charGrid');
+const startPage = document.getElementById('startPage');
+const gamePage = document.getElementById('gamePage');
 const modeTitle = document.getElementById('modeTitle');
+const gridEl = document.getElementById('charGrid');
 const btnGroup = document.getElementById('btnGroup');
 const scoreOverlay = document.getElementById('scoreOverlay');
 const scoreNum = document.getElementById('scoreNum');
@@ -1184,7 +1227,6 @@ const closeWrongBtn = document.getElementById('closeWrongBtn');
 
 let currentWrongList = [];
 
-// 工具函数
 function getValidChars(text) {
     return [...text].filter(ch => PINYIN_DICT[ch] !== undefined);
 }
@@ -1192,7 +1234,6 @@ function splitPinyinInput(str) {
     return str.trim().split(/\s+/).filter(s => s !== '');
 }
 
-// 游戏逻辑
 function getPool() {
     if (currentMode === 'words') return WORDS_POOL;
     if (currentMode === 'sentences') return SENTENCES_POOL;
@@ -1241,7 +1282,6 @@ function calculateScore(items, answers) {
     return { correct, errors, total };
 }
 
-// UI 渲染
 function render() {
     const chars = getCurrentChars();
     const modeNames = { words: '词语练习 (5个一组)', sentences: '句子练习 (3句一组)', articles: '文章练习' };
@@ -1318,12 +1358,11 @@ function saveCurrentInputs() {
 
 function renderButtons() {
     btnGroup.innerHTML = '';
+    // 返回主页按钮
     const homeBtn = document.createElement('button');
     homeBtn.className = 'btn btn-home';
-    homeBtn.textContent = '🏠 返回';
-    homeBtn.addEventListener('click', () => {
-        if (confirm('返回主页将重置当前进度，确定？')) location.reload();
-    });
+    homeBtn.textContent = '🏠 返回主页';
+    homeBtn.addEventListener('click', goHome);
     btnGroup.appendChild(homeBtn);
 
     if (currentMode === 'articles') {
@@ -1383,7 +1422,12 @@ function handleNextOrSubmit() {
 function handleSubmit() {
     saveCurrentInputs();
     if (currentMode === 'articles') {
-        alert('文章模式暂未实现，请选择词语或句子模式。');
+        // 文章模式计分（目前与词语/句子逻辑相同，都是逐字对比）
+        // 但文章模式不需要分项，直接计算所有字符
+        // 这里我们复用同一个计分函数，因为 batchItems 里只有一篇文章
+        const result = calculateScore(batchItems, batchAnswers);
+        currentWrongList = result.errors;
+        showScore(result.correct, result.total, result.errors);
         return;
     }
     const result = calculateScore(batchItems, batchAnswers);
@@ -1409,7 +1453,11 @@ function showScore(correct, total, errors) {
 }
 
 function closeScore() { scoreOverlay.classList.remove('active'); }
-function nextRound() { closeScore(); generateBatch(); render(); }
+function nextRound() {
+    closeScore();
+    generateBatch();
+    render();
+}
 function showWrongList() {
     if (currentWrongList.length === 0) return;
     wrongList.innerHTML = '';
@@ -1427,13 +1475,36 @@ function showWrongList() {
 }
 function closeWrong() { wrongOverlay.classList.remove('active'); }
 
+// ===== 页面切换 =====
+function goHome() {
+    gamePage.style.display = 'none';
+    startPage.style.display = 'flex';
+    // 清理状态（可选）
+    // 重置批次，避免残留
+    batchItems = [];
+    batchIndex = 0;
+    batchAnswers = [];
+}
+
 function startGame(mode) {
     currentMode = mode;
+    // 显示游戏页面，隐藏主页
+    startPage.style.display = 'none';
+    gamePage.style.display = 'flex';
     generateBatch();
     render();
 }
 
-// 事件绑定
+// ===== 事件绑定 =====
+// 开始按钮
+document.querySelectorAll('.start-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const mode = this.dataset.mode;
+        startGame(mode);
+    });
+});
+
+// 得分弹窗按钮
 viewWrongBtn.addEventListener('click', showWrongList);
 closeWrongBtn.addEventListener('click', closeWrong);
 closeScoreBtn.addEventListener('click', closeScore);
@@ -1441,8 +1512,9 @@ nextRoundBtn.addEventListener('click', nextRound);
 scoreOverlay.addEventListener('click', function(e) { if (e.target === this) closeScore(); });
 wrongOverlay.addEventListener('click', function(e) { if (e.target === this) closeWrong(); });
 
-// 启动
-startGame('words');
+// 初始显示主页
+startPage.style.display = 'flex';
+gamePage.style.display = 'none';
 </script>
 </body>
 </html>
