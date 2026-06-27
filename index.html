@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>拼音小游戏</title>
     <style>
         /* ===== 全局样式 ===== */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             background: #e8f4f8;
@@ -22,7 +26,7 @@
             width: 100%;
             background: white;
             border-radius: 24px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             padding: 20px 16px 30px;
             position: relative;
             min-height: 80vh;
@@ -56,14 +60,22 @@
             font-weight: bold;
             color: white;
             background: #7fb3d5;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.15s;
         }
-        .start-btn:active { transform: scale(0.95); }
-        .start-btn.words { background: #5bc0de; }
-        .start-btn.sentences { background: #5cb85c; }
-        .start-btn.articles { background: #f0ad4e; }
+        .start-btn:active {
+            transform: scale(0.95);
+        }
+        .start-btn.words {
+            background: #5bc0de;
+        }
+        .start-btn.sentences {
+            background: #5cb85c;
+        }
+        .start-btn.articles {
+            background: #f0ad4e;
+        }
 
         /* ===== 游戏界面 ===== */
         #gamePage {
@@ -77,82 +89,147 @@
             color: #4a90d9;
             margin-bottom: 16px;
         }
+
         .char-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px 12px;
+            gap: 6px 8px;
             background: #fafafa;
-            padding: 20px 12px;
+            padding: 16px 10px;
             border-radius: 16px;
-            margin-bottom: 20px;
-            min-height: 120px;
+            margin-bottom: 16px;
+            min-height: 100px;
         }
+
         .char-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
+            width: 64px;
+            min-height: 96px;
+            padding: 4px 2px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            transition: background 0.2s;
+            flex-shrink: 0;
         }
-        .char-label {
+        .char-item.punct {
+            justify-content: center;
+            background: transparent;
+            box-shadow: none;
+            min-height: 96px;
+            width: 40px;
+        }
+        .char-item.punct .char-label {
             font-size: 28px;
-            font-weight: bold;
-            color: #4a90d9;
-            margin-bottom: 4px;
+            color: #999;
+            font-weight: 400;
+            margin-bottom: 0;
         }
+
+        .char-label {
+            font-size: 26px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.3;
+            margin-bottom: 2px;
+            user-select: none;
+        }
+        .char-item.punct .char-label {
+            font-size: 26px;
+            color: #aaa;
+            font-weight: 400;
+        }
+
         .char-input {
-            width: 60px;
-            height: 44px;
-            font-size: 20px;
+            width: 56px;
+            height: 38px;
+            font-size: 18px;
             text-align: center;
-            border: 2px solid #ccc;
+            border: 2px solid #d0d7de;
             border-radius: 8px;
             background: #fefefe;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, background 0.2s;
+            font-family: inherit;
         }
         .char-input:focus {
             border-color: #4a90d9;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
         }
+        .char-input.correct {
+            border-color: #5cb85c;
+            background: #eafaf1;
+        }
+        .char-input.wrong {
+            border-color: #d9534f;
+            background: #fdf0ef;
+        }
+
+        /* 按钮组 */
         .btn-group {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
+            gap: 8px;
+            margin-top: 6px;
         }
         .btn {
-            padding: 12px 20px;
+            padding: 10px 18px;
             border: none;
             border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 600;
             color: white;
             background: #7fb3d5;
             cursor: pointer;
             flex: 1 0 auto;
-            min-width: 80px;
+            min-width: 70px;
             transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: #5bc0de; }
-        .btn-success { background: #5cb85c; }
-        .btn-warning { background: #f0ad4e; }
-        .btn-danger { background: #d9534f; }
-        .btn-orange { background: #e67e22; }
-        .btn-home { background: #95a5a6; }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: #5bc0de;
+        }
+        .btn-success {
+            background: #5cb85c;
+        }
+        .btn-warning {
+            background: #f0ad4e;
+        }
+        .btn-danger {
+            background: #d9534f;
+        }
+        .btn-orange {
+            background: #e67e22;
+        }
+        .btn-home {
+            background: #95a5a6;
+        }
 
-        /* ===== 弹窗样式（得分/错题） ===== */
+        /* ===== 弹窗样式 ===== */
         .overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
             justify-content: center;
             align-items: center;
             z-index: 999;
         }
-        .overlay.active { display: flex; }
+        .overlay.active {
+            display: flex;
+        }
         .modal {
             background: white;
             border-radius: 28px;
@@ -160,16 +237,25 @@
             max-width: 380px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
         }
-        .modal h2 { font-size: 28px; margin-bottom: 8px; }
+        .modal h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
         .modal .score-number {
             font-size: 48px;
             font-weight: bold;
             color: #5cb85c;
         }
-        .modal .score-number.low { color: #d9534f; }
-        .modal .detail { font-size: 16px; color: #555; margin: 8px 0 16px; }
+        .modal .score-number.low {
+            color: #d9534f;
+        }
+        .modal .detail {
+            font-size: 16px;
+            color: #555;
+            margin: 8px 0 16px;
+        }
         .modal .wrong-btn {
             background: #f0ad4e;
             color: white;
@@ -186,18 +272,26 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-        .modal .btn-group-modal .btn { flex: 1; min-width: 80px; }
+        .modal .btn-group-modal .btn {
+            flex: 1;
+            min-width: 80px;
+        }
 
         .wrong-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-        .wrong-overlay.active { display: flex; }
+        .wrong-overlay.active {
+            display: flex;
+        }
         .wrong-modal {
             background: white;
             border-radius: 28px;
@@ -207,7 +301,10 @@
             max-height: 70vh;
             overflow-y: auto;
         }
-        .wrong-modal h3 { color: #c0392b; margin-bottom: 12px; }
+        .wrong-modal h3 {
+            color: #c0392b;
+            margin-bottom: 12px;
+        }
         .wrong-item {
             display: flex;
             justify-content: space-between;
@@ -215,63 +312,120 @@
             border-bottom: 1px solid #eee;
             font-size: 16px;
         }
-        .wrong-item .ch { font-weight: bold; font-size: 20px; }
-        .wrong-item .correct { color: #5cb85c; }
-        .wrong-item .user { color: #d9534f; }
+        .wrong-item .ch {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .wrong-item .correct {
+            color: #5cb85c;
+        }
+        .wrong-item .user {
+            color: #d9534f;
+        }
 
         @media (max-width: 480px) {
-            .char-input { width: 52px; height: 40px; font-size: 18px; }
-            .btn { font-size: 14px; padding: 10px 14px; }
-            .start-btn { font-size: 18px; padding: 14px 0; }
+            .char-item {
+                width: 52px;
+                min-height: 84px;
+                padding: 2px 1px;
+            }
+            .char-item.punct {
+                width: 32px;
+                min-height: 84px;
+            }
+            .char-label {
+                font-size: 22px;
+            }
+            .char-item.punct .char-label {
+                font-size: 22px;
+            }
+            .char-input {
+                width: 46px;
+                height: 34px;
+                font-size: 16px;
+            }
+            .btn {
+                font-size: 13px;
+                padding: 8px 12px;
+                min-width: 60px;
+            }
+            .start-btn {
+                font-size: 18px;
+                padding: 14px 0;
+            }
+            .modal .score-number {
+                font-size: 38px;
+            }
+        }
+        @media (max-width: 380px) {
+            .char-item {
+                width: 44px;
+                min-height: 74px;
+            }
+            .char-item.punct {
+                width: 28px;
+                min-height: 74px;
+            }
+            .char-label {
+                font-size: 18px;
+            }
+            .char-item.punct .char-label {
+                font-size: 18px;
+            }
+            .char-input {
+                width: 40px;
+                height: 30px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="container">
 
-    <!-- ===== 开始界面 ===== -->
-    <div id="startPage">
-        <h1>📚 拼音小游戏</h1>
-        <p>选择一种模式，开始挑战吧！</p>
-        <button class="start-btn words" data-mode="words">📝 词语练习</button>
-        <button class="start-btn sentences" data-mode="sentences">📖 句子练习</button>
-        <button class="start-btn articles" data-mode="articles">📄 文章练习</button>
+        <!-- ===== 开始界面 ===== -->
+        <div id="startPage">
+            <h1>📚 拼音小游戏</h1>
+            <p>选择一种模式，开始挑战吧！</p>
+            <button class="start-btn words" data-mode="words">📝 词语练习</button>
+            <button class="start-btn sentences" data-mode="sentences">📖 句子练习</button>
+            <button class="start-btn articles" data-mode="articles">📄 文章练习</button>
+        </div>
+
+        <!-- ===== 游戏界面 ===== -->
+        <div id="gamePage">
+            <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
+            <div id="charGrid" class="char-grid"></div>
+            <div class="btn-group" id="btnGroup"></div>
+        </div>
+
     </div>
 
-    <!-- ===== 游戏界面 ===== -->
-    <div id="gamePage">
-        <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
-        <div id="charGrid" class="char-grid"></div>
-        <div class="btn-group" id="btnGroup"></div>
-    </div>
-
-</div>
-
-<!-- 得分弹窗 -->
-<div class="overlay" id="scoreOverlay">
-    <div class="modal">
-        <h2>🏆 得分</h2>
-        <div class="score-number" id="scoreNum">0</div>
-        <div class="detail" id="scoreDetail">正确 0 / 0 字</div>
-        <button class="wrong-btn" id="viewWrongBtn" style="display:none;">📖 查看错题</button>
-        <div id="perfectMsg" style="display:none; color:#5cb85c; font-size:20px; margin:8px 0;">🎉 全部正确！太棒了！</div>
-        <div class="btn-group-modal">
-            <button class="btn btn-primary" id="nextRoundBtn">➡️ 下一题</button>
-            <button class="btn btn-home" id="closeScoreBtn">关闭</button>
+    <!-- 得分弹窗 -->
+    <div class="overlay" id="scoreOverlay">
+        <div class="modal">
+            <h2>🏆 得分</h2>
+            <div class="score-number" id="scoreNum">0</div>
+            <div class="detail" id="scoreDetail">正确 0 / 0 字</div>
+            <button class="wrong-btn" id="viewWrongBtn" style="display:none;">📖 查看错题</button>
+            <div id="perfectMsg" style="display:none; color:#5cb85c; font-size:20px; margin:8px 0;">🎉 全部正确！太棒了！</div>
+            <div class="btn-group-modal">
+                <button class="btn btn-primary" id="nextRoundBtn">➡️ 下一题</button>
+                <button class="btn btn-home" id="closeScoreBtn">关闭</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- 错题本弹窗 -->
-<div class="wrong-overlay" id="wrongOverlay">
-    <div class="wrong-modal">
-        <h3>📕 错题本</h3>
-        <div id="wrongList"></div>
-        <button class="btn btn-home" style="width:100%; margin-top:16px;" id="closeWrongBtn">关闭</button>
+    <!-- 错题本弹窗 -->
+    <div class="wrong-overlay" id="wrongOverlay">
+        <div class="wrong-modal">
+            <h3>📕 错题本</h3>
+            <div id="wrongList"></div>
+            <button class="btn btn-home" style="width:100%; margin-top:16px;" id="closeWrongBtn">关闭</button>
+        </div>
     </div>
-</div>
 
-<script>
+    <script>
 // =====================================================================
 //  数据（已根据你提供的拼音列表完整填充）
 // =====================================================================
@@ -1212,321 +1366,373 @@ const ARTICLES_POOL = [
 ];
 
 // =====================================================================
-//  游戏状态（与 Python 版对应）
-// =====================================================================
-let currentMode = 'words';
-let batchItems = [];
-let batchIndex = 0;
-let batchAnswers = [];
-const BATCH_SIZE = { words: 5, sentences: 3 };
+        //  游戏逻辑（完整）
+        // =====================================================================
 
-// DOM 引用
-const startPage = document.getElementById('startPage');
-const gamePage = document.getElementById('gamePage');
-const modeTitle = document.getElementById('modeTitle');
-const gridEl = document.getElementById('charGrid');
-const btnGroup = document.getElementById('btnGroup');
-const scoreOverlay = document.getElementById('scoreOverlay');
-const scoreNum = document.getElementById('scoreNum');
-const scoreDetail = document.getElementById('scoreDetail');
-const viewWrongBtn = document.getElementById('viewWrongBtn');
-const perfectMsg = document.getElementById('perfectMsg');
-const nextRoundBtn = document.getElementById('nextRoundBtn');
-const closeScoreBtn = document.getElementById('closeScoreBtn');
-const wrongOverlay = document.getElementById('wrongOverlay');
-const wrongList = document.getElementById('wrongList');
-const closeWrongBtn = document.getElementById('closeWrongBtn');
-
-let currentWrongList = [];
-
-function getValidChars(text) {
-    return [...text].filter(ch => PINYIN_DICT[ch] !== undefined);
-}
-function splitPinyinInput(str) {
-    return str.trim().split(/\s+/).filter(s => s !== '');
-}
-
-function getPool() {
-    if (currentMode === 'words') return WORDS_POOL;
-    if (currentMode === 'sentences') return SENTENCES_POOL;
-    return ARTICLES_POOL;
-}
-function generateBatch() {
-    const pool = getPool().filter(item => item.trim() !== '');
-    if (pool.length === 0) {
-        batchItems = []; batchIndex = 0; batchAnswers = [];
-        return;
-    }
-    const size = BATCH_SIZE[currentMode] || 3;
-    const shuffled = pool.slice().sort(() => Math.random() - 0.5);
-    batchItems = shuffled.slice(0, Math.min(size, shuffled.length));
-    batchIndex = 0;
-    batchAnswers = new Array(batchItems.length).fill('');
-}
-function getCurrentItem() { return batchItems[batchIndex] || ''; }
-function getCurrentChars() { return getValidChars(getCurrentItem()); }
-function saveCurrentAnswer(inputStr) {
-    if (batchIndex < batchAnswers.length) batchAnswers[batchIndex] = inputStr;
-}
-function nextItem() {
-    if (batchIndex < batchItems.length - 1) { batchIndex++; return true; }
-    return false;
-}
-function prevItem() {
-    if (batchIndex > 0) { batchIndex--; return true; }
-    return false;
-}
-function calculateScore(items, answers) {
-    let correct = 0, errors = [], total = 0;
-    for (let i = 0; i < items.length; i++) {
-        const chars = getValidChars(items[i]);
-        if (chars.length === 0) continue;
-        total += chars.length;
-        const parts = splitPinyinInput(answers[i] || '');
-        for (let j = 0; j < chars.length; j++) {
-            const ch = chars[j];
-            const correctPinyin = PINYIN_DICT[ch] || '';
-            const userPinyin = (j < parts.length) ? parts[j].toLowerCase() : '';
-            if (userPinyin === correctPinyin) correct++;
-            else errors.push({ char: ch, correct: correctPinyin, user: userPinyin });
+        // ---------- 工具函数 ----------
+        function isPunct(ch) {
+            return /[，。！？、；：……—·《》‘’“”（）\.,;:!?']/.test(ch);
         }
-    }
-    return { correct, errors, total };
-}
 
-function render() {
-    const chars = getCurrentChars();
-    const modeNames = { words: '词语练习 (5个一组)', sentences: '句子练习 (3句一组)', articles: '文章练习' };
-    modeTitle.textContent = modeNames[currentMode] || '练习';
+        function getValidChars(text) {
+            return [...text].filter(ch => PINYIN_DICT[ch] !== undefined && !isPunct(ch));
+        }
 
-    gridEl.innerHTML = '';
-    if (chars.length === 0) {
-        gridEl.innerHTML = '<div style="color:red; padding:20px;">⚠️ 当前项无有效汉字，请检查数据</div>';
-    } else {
-        chars.forEach((ch, idx) => {
-            const div = document.createElement('div');
-            div.className = 'char-item';
-            const label = document.createElement('div');
-            label.className = 'char-label';
-            label.textContent = ch;
-            const input = document.createElement('input');
-            input.className = 'char-input';
-            input.type = 'text';
-            input.maxLength = 10;
-            input.dataset.char = ch;
-            input.dataset.idx = idx;
+        function splitPinyinInput(str) {
+            return str.trim().split(/\s+/).filter(s => s !== '');
+        }
 
-            const saved = batchAnswers[batchIndex] || '';
-            const parts = splitPinyinInput(saved);
-            if (idx < parts.length) input.value = parts[idx];
+        // ---------- 游戏状态 ----------
+        let currentMode = 'words';
+        let batchItems = [];
+        let batchIndex = 0;
+        let batchAnswers = [];
+        const BATCH_SIZE = { words: 5, sentences: 3 };
 
-            input.addEventListener('input', function() {
-                const ch = this.dataset.char;
-                const correct = PINYIN_DICT[ch] || '';
-                const user = this.value.trim().toLowerCase();
-                if (user === correct && user !== '') {
-                    this.style.backgroundColor = '#d4edda';
-                    setTimeout(() => this.style.backgroundColor = '#fefefe', 400);
-                } else if (user !== '' && user !== correct) {
-                    this.style.backgroundColor = '#f8d7da';
-                    setTimeout(() => this.style.backgroundColor = '#fefefe', 400);
-                } else {
-                    this.style.backgroundColor = '#fefefe';
+        // ---------- DOM 引用 ----------
+        const startPage = document.getElementById('startPage');
+        const gamePage = document.getElementById('gamePage');
+        const modeTitle = document.getElementById('modeTitle');
+        const gridEl = document.getElementById('charGrid');
+        const btnGroup = document.getElementById('btnGroup');
+        const scoreOverlay = document.getElementById('scoreOverlay');
+        const scoreNum = document.getElementById('scoreNum');
+        const scoreDetail = document.getElementById('scoreDetail');
+        const viewWrongBtn = document.getElementById('viewWrongBtn');
+        const perfectMsg = document.getElementById('perfectMsg');
+        const nextRoundBtn = document.getElementById('nextRoundBtn');
+        const closeScoreBtn = document.getElementById('closeScoreBtn');
+        const wrongOverlay = document.getElementById('wrongOverlay');
+        const wrongList = document.getElementById('wrongList');
+        const closeWrongBtn = document.getElementById('closeWrongBtn');
+        let currentWrongList = [];
+
+        // ---------- 数据池获取 ----------
+        function getPool() {
+            if (currentMode === 'words') return WORDS_POOL;
+            if (currentMode === 'sentences') return SENTENCES_POOL;
+            return ARTICLES_POOL;
+        }
+
+        // ---------- 批次管理 ----------
+        function generateBatch() {
+            const pool = getPool().filter(item => item.trim() !== '');
+            if (pool.length === 0) {
+                batchItems = [];
+                batchIndex = 0;
+                batchAnswers = [];
+                return;
+            }
+            const size = BATCH_SIZE[currentMode] || 3;
+            const shuffled = pool.slice().sort(() => Math.random() - 0.5);
+            batchItems = shuffled.slice(0, Math.min(size, shuffled.length));
+            batchIndex = 0;
+            batchAnswers = new Array(batchItems.length).fill('');
+        }
+
+        function getCurrentItem() { return batchItems[batchIndex] || ''; }
+
+        function getCurrentChars() {
+            const text = getCurrentItem();
+            return [...text].filter(ch => PINYIN_DICT[ch] !== undefined && !isPunct(ch));
+        }
+
+        function saveCurrentAnswer(inputStr) {
+            if (batchIndex < batchAnswers.length) batchAnswers[batchIndex] = inputStr;
+        }
+
+        function nextItem() {
+            if (batchIndex < batchItems.length - 1) { batchIndex++; return true; }
+            return false;
+        }
+
+        function prevItem() {
+            if (batchIndex > 0) { batchIndex--; return true; }
+            return false;
+        }
+
+        // ---------- 计分 ----------
+        function calculateScore(items, answers) {
+            let correct = 0,
+                errors = [],
+                total = 0;
+            for (let i = 0; i < items.length; i++) {
+                const chars = getValidChars(items[i]);
+                if (chars.length === 0) continue;
+                total += chars.length;
+                const parts = splitPinyinInput(answers[i] || '');
+                for (let j = 0; j < chars.length; j++) {
+                    const ch = chars[j];
+                    const correctPinyin = PINYIN_DICT[ch] || '';
+                    const userPinyin = (j < parts.length) ? parts[j].toLowerCase() : '';
+                    if (userPinyin === correctPinyin) correct++;
+                    else errors.push({ char: ch, correct: correctPinyin, user: userPinyin });
                 }
-            });
+            }
+            return { correct, errors, total };
+        }
 
-            input.addEventListener('keydown', function(e) {
-                const inputs = gridEl.querySelectorAll('.char-input');
-                const idx = parseInt(this.dataset.idx);
-                if (e.key === ' ' || e.key === 'Space' || e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    if (idx + 1 < inputs.length) inputs[idx + 1].focus();
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    if (idx - 1 >= 0) inputs[idx - 1].focus();
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
+        // ---------- 渲染 ----------
+        function render() {
+            const fullText = getCurrentItem();
+            const chars = getCurrentChars(); // 仅汉字
+            const modeNames = { words: '词语练习 (5个一组)', sentences: '句子练习 (3句一组)', articles: '文章练习' };
+            modeTitle.textContent = modeNames[currentMode] || '练习';
+
+            gridEl.innerHTML = '';
+
+            // 遍历全文，每个字符独立渲染
+            for (let i = 0; i < fullText.length; i++) {
+                const ch = fullText[i];
+                const div = document.createElement('div');
+                div.className = 'char-item';
+
+                if (isPunct(ch)) {
+                    div.classList.add('punct');
+                    const label = document.createElement('div');
+                    label.className = 'char-label';
+                    label.textContent = ch;
+                    div.appendChild(label);
+                    gridEl.appendChild(div);
+                    continue;
+                }
+
+                // 汉字（但可能不在字典中）
+                if (!PINYIN_DICT[ch]) {
+                    const label = document.createElement('div');
+                    label.className = 'char-label';
+                    label.textContent = ch;
+                    div.appendChild(label);
+                    gridEl.appendChild(div);
+                    continue;
+                }
+
+                // 正常汉字：显示字 + 输入框
+                const label = document.createElement('div');
+                label.className = 'char-label';
+                label.textContent = ch;
+
+                const input = document.createElement('input');
+                input.className = 'char-input';
+                input.type = 'text';
+                input.maxLength = 10;
+                input.dataset.char = ch;
+                input.dataset.idx = i; // 原始位置
+
+                // 恢复已保存的答案（按汉字顺序）
+                const charIndex = chars.indexOf(ch);
+                if (charIndex !== -1) {
+                    const saved = batchAnswers[batchIndex] || '';
+                    const parts = splitPinyinInput(saved);
+                    if (charIndex < parts.length) input.value = parts[charIndex];
+                }
+
+                // 输入时实时反馈
+                input.addEventListener('input', function() {
+                    const ch = this.dataset.char;
+                    const correct = PINYIN_DICT[ch] || '';
+                    const user = this.value.trim().toLowerCase();
+                    this.classList.remove('correct', 'wrong');
+                    if (user === correct && user !== '') {
+                        this.classList.add('correct');
+                    } else if (user !== '' && user !== correct) {
+                        this.classList.add('wrong');
+                    }
+                });
+
+                // 键盘导航（上下空格跳转，回车提交）
+                input.addEventListener('keydown', function(e) {
+                    const inputs = gridEl.querySelectorAll('.char-input');
+                    const idx = parseInt(this.dataset.idx);
+                    if (e.key === ' ' || e.key === 'Space' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        // 找到下一个输入框（按原始位置递增）
+                        for (let el of inputs) {
+                            if (parseInt(el.dataset.idx) > idx) { el.focus(); return; }
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        for (let el of inputs) {
+                            if (parseInt(el.dataset.idx) < idx) { el.focus(); return; }
+                        }
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveCurrentInputs();
+                        handleNextOrSubmit();
+                    }
+                });
+
+                div.appendChild(label);
+                div.appendChild(input);
+                gridEl.appendChild(div);
+            }
+
+            // 聚焦第一个输入框
+            const firstInput = gridEl.querySelector('.char-input');
+            if (firstInput) setTimeout(() => firstInput.focus(), 100);
+
+            renderButtons();
+        }
+
+        // ---------- 保存当前所有输入 ----------
+        function saveCurrentInputs() {
+            const inputs = gridEl.querySelectorAll('.char-input');
+            const parts = [];
+            inputs.forEach(inp => parts.push(inp.value.trim().toLowerCase()));
+            saveCurrentAnswer(parts.join(' '));
+        }
+
+        // ---------- 按钮渲染 ----------
+        function renderButtons() {
+            btnGroup.innerHTML = '';
+            // 返回主页
+            const homeBtn = document.createElement('button');
+            homeBtn.className = 'btn btn-home';
+            homeBtn.textContent = '🏠 返回主页';
+            homeBtn.addEventListener('click', goHome);
+            btnGroup.appendChild(homeBtn);
+
+            if (currentMode === 'articles') {
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'btn btn-success';
+                submitBtn.textContent = '✅ 提交答案';
+                submitBtn.addEventListener('click', handleSubmit);
+                btnGroup.appendChild(submitBtn);
+                return;
+            }
+
+            const isLast = (batchIndex === batchItems.length - 1);
+            const isFirst = (batchIndex === 0);
+
+            if (!isFirst) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'btn btn-primary';
+                prevBtn.textContent = '⬅️ 上一个';
+                prevBtn.addEventListener('click', () => {
                     saveCurrentInputs();
-                    handleNextOrSubmit();
-                }
+                    if (prevItem()) render();
+                });
+                btnGroup.appendChild(prevBtn);
+            } else {
+                const placeholder = document.createElement('span');
+                placeholder.style.width = '80px';
+                btnGroup.appendChild(placeholder);
+            }
+
+            if (isLast) {
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'btn btn-success';
+                submitBtn.textContent = '✅ 提交答案';
+                submitBtn.addEventListener('click', handleSubmit);
+                btnGroup.appendChild(submitBtn);
+            } else {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'btn btn-warning';
+                nextBtn.textContent = '➡️ 下一个';
+                nextBtn.addEventListener('click', () => {
+                    saveCurrentInputs();
+                    if (nextItem()) render();
+                });
+                btnGroup.appendChild(nextBtn);
+            }
+        }
+
+        // ---------- 提交与跳转 ----------
+        function handleNextOrSubmit() {
+            const isLast = (batchIndex === batchItems.length - 1);
+            if (isLast) handleSubmit();
+            else {
+                saveCurrentInputs();
+                if (nextItem()) render();
+            }
+        }
+
+        function handleSubmit() {
+            saveCurrentInputs();
+            const result = calculateScore(batchItems, batchAnswers);
+            currentWrongList = result.errors;
+            showScore(result.correct, result.total, result.errors);
+        }
+
+        // ---------- 显示得分 ----------
+        function showScore(correct, total, errors) {
+            const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+            scoreNum.textContent = percent + ' 分';
+            scoreNum.className = 'score-number' + (percent < 100 ? ' low' : '');
+            scoreDetail.textContent = `正确 ${correct} 字 / 共 ${total} 字`;
+
+            if (errors.length > 0) {
+                viewWrongBtn.style.display = 'inline-block';
+                viewWrongBtn.textContent = `📖 查看错题（${errors.length} 个）`;
+                perfectMsg.style.display = 'none';
+            } else {
+                viewWrongBtn.style.display = 'none';
+                perfectMsg.style.display = 'block';
+            }
+            scoreOverlay.classList.add('active');
+        }
+
+        function closeScore() { scoreOverlay.classList.remove('active'); }
+
+        function nextRound() {
+            closeScore();
+            generateBatch();
+            render();
+        }
+
+        function showWrongList() {
+            if (currentWrongList.length === 0) return;
+            wrongList.innerHTML = '';
+            currentWrongList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'wrong-item';
+                div.innerHTML = `
+                        <span class="ch">${item.char}</span>
+                        <span class="correct">正确：${item.correct}</span>
+                        <span class="user">你的输入：${item.user}</span>
+                    `;
+                wrongList.appendChild(div);
             });
+            wrongOverlay.classList.add('active');
+        }
 
-            div.appendChild(label);
-            div.appendChild(input);
-            gridEl.appendChild(div);
+        function closeWrong() { wrongOverlay.classList.remove('active'); }
+
+        // ---------- 页面切换 ----------
+        function goHome() {
+            gamePage.style.display = 'none';
+            startPage.style.display = 'flex';
+            batchItems = [];
+            batchIndex = 0;
+            batchAnswers = [];
+        }
+
+        function startGame(mode) {
+            currentMode = mode;
+            startPage.style.display = 'none';
+            gamePage.style.display = 'flex';
+            generateBatch();
+            render();
+        }
+
+        // ===== 事件绑定 =====
+        document.querySelectorAll('.start-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const mode = this.dataset.mode;
+                startGame(mode);
+            });
         });
-        const firstInput = gridEl.querySelector('.char-input');
-        if (firstInput) setTimeout(() => firstInput.focus(), 100);
-    }
-    renderButtons();
-}
 
-function saveCurrentInputs() {
-    const inputs = gridEl.querySelectorAll('.char-input');
-    const parts = [];
-    inputs.forEach(inp => parts.push(inp.value.trim().toLowerCase()));
-    saveCurrentAnswer(parts.join(' '));
-}
+        viewWrongBtn.addEventListener('click', showWrongList);
+        closeWrongBtn.addEventListener('click', closeWrong);
+        closeScoreBtn.addEventListener('click', closeScore);
+        nextRoundBtn.addEventListener('click', nextRound);
+        scoreOverlay.addEventListener('click', function(e) { if (e.target === this) closeScore(); });
+        wrongOverlay.addEventListener('click', function(e) { if (e.target === this) closeWrong(); });
 
-function renderButtons() {
-    btnGroup.innerHTML = '';
-    // 返回主页按钮
-    const homeBtn = document.createElement('button');
-    homeBtn.className = 'btn btn-home';
-    homeBtn.textContent = '🏠 返回主页';
-    homeBtn.addEventListener('click', goHome);
-    btnGroup.appendChild(homeBtn);
-
-    if (currentMode === 'articles') {
-        const submitBtn = document.createElement('button');
-        submitBtn.className = 'btn btn-success';
-        submitBtn.textContent = '✅ 提交答案';
-        submitBtn.addEventListener('click', handleSubmit);
-        btnGroup.appendChild(submitBtn);
-        return;
-    }
-
-    const isLast = (batchIndex === batchItems.length - 1);
-    const isFirst = (batchIndex === 0);
-
-    if (!isFirst) {
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'btn btn-primary';
-        prevBtn.textContent = '⬅️ 上一个';
-        prevBtn.addEventListener('click', () => {
-            saveCurrentInputs();
-            if (prevItem()) render();
-        });
-        btnGroup.appendChild(prevBtn);
-    } else {
-        const placeholder = document.createElement('span');
-        placeholder.style.width = '80px';
-        btnGroup.appendChild(placeholder);
-    }
-
-    if (isLast) {
-        const submitBtn = document.createElement('button');
-        submitBtn.className = 'btn btn-success';
-        submitBtn.textContent = '✅ 提交答案';
-        submitBtn.addEventListener('click', handleSubmit);
-        btnGroup.appendChild(submitBtn);
-    } else {
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'btn btn-warning';
-        nextBtn.textContent = '➡️ 下一个';
-        nextBtn.addEventListener('click', () => {
-            saveCurrentInputs();
-            if (nextItem()) render();
-        });
-        btnGroup.appendChild(nextBtn);
-    }
-}
-
-function handleNextOrSubmit() {
-    const isLast = (batchIndex === batchItems.length - 1);
-    if (isLast) handleSubmit();
-    else {
-        saveCurrentInputs();
-        if (nextItem()) render();
-    }
-}
-
-function handleSubmit() {
-    saveCurrentInputs();
-    if (currentMode === 'articles') {
-        // 文章模式计分（目前与词语/句子逻辑相同，都是逐字对比）
-        // 但文章模式不需要分项，直接计算所有字符
-        // 这里我们复用同一个计分函数，因为 batchItems 里只有一篇文章
-        const result = calculateScore(batchItems, batchAnswers);
-        currentWrongList = result.errors;
-        showScore(result.correct, result.total, result.errors);
-        return;
-    }
-    const result = calculateScore(batchItems, batchAnswers);
-    currentWrongList = result.errors;
-    showScore(result.correct, result.total, result.errors);
-}
-
-function showScore(correct, total, errors) {
-    const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
-    scoreNum.textContent = percent + ' 分';
-    scoreNum.className = 'score-number' + (percent < 100 ? ' low' : '');
-    scoreDetail.textContent = `正确 ${correct} 字 / 共 ${total} 字`;
-
-    if (errors.length > 0) {
-        viewWrongBtn.style.display = 'inline-block';
-        viewWrongBtn.textContent = `📖 查看错题（${errors.length} 个）`;
-        perfectMsg.style.display = 'none';
-    } else {
-        viewWrongBtn.style.display = 'none';
-        perfectMsg.style.display = 'block';
-    }
-    scoreOverlay.classList.add('active');
-}
-
-function closeScore() { scoreOverlay.classList.remove('active'); }
-function nextRound() {
-    closeScore();
-    generateBatch();
-    render();
-}
-function showWrongList() {
-    if (currentWrongList.length === 0) return;
-    wrongList.innerHTML = '';
-    currentWrongList.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'wrong-item';
-        div.innerHTML = `
-            <span class="ch">${item.char}</span>
-            <span class="correct">正确：${item.correct}</span>
-            <span class="user">你的输入：${item.user}</span>
-        `;
-        wrongList.appendChild(div);
-    });
-    wrongOverlay.classList.add('active');
-}
-function closeWrong() { wrongOverlay.classList.remove('active'); }
-
-// ===== 页面切换 =====
-function goHome() {
-    gamePage.style.display = 'none';
-    startPage.style.display = 'flex';
-    // 清理状态（可选）
-    // 重置批次，避免残留
-    batchItems = [];
-    batchIndex = 0;
-    batchAnswers = [];
-}
-
-function startGame(mode) {
-    currentMode = mode;
-    // 显示游戏页面，隐藏主页
-    startPage.style.display = 'none';
-    gamePage.style.display = 'flex';
-    generateBatch();
-    render();
-}
-
-// ===== 事件绑定 =====
-// 开始按钮
-document.querySelectorAll('.start-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const mode = this.dataset.mode;
-        startGame(mode);
-    });
-});
-
-// 得分弹窗按钮
-viewWrongBtn.addEventListener('click', showWrongList);
-closeWrongBtn.addEventListener('click', closeWrong);
-closeScoreBtn.addEventListener('click', closeScore);
-nextRoundBtn.addEventListener('click', nextRound);
-scoreOverlay.addEventListener('click', function(e) { if (e.target === this) closeScore(); });
-wrongOverlay.addEventListener('click', function(e) { if (e.target === this) closeWrong(); });
-
-// 初始显示主页
-startPage.style.display = 'flex';
-gamePage.style.display = 'none';
-</script>
+        // 初始显示主页
+        startPage.style.display = 'flex';
+        gamePage.style.display = 'none';
+    </script>
 </body>
 </html>
