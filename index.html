@@ -238,9 +238,7 @@
         .wrong-item .correct { color: #5cb85c; }
         .wrong-item .user { color: #d9534f; }
 
-        #perfectMsg {
-            color: #5cb85c !important;
-        }
+        #perfectMsg { color: #5cb85c !important; }
 
         /* 响应式 */
         @media (max-width: 480px) {
@@ -1248,7 +1246,7 @@
         ];
 
         // ============================================================
-        //  工具函数（保持不变）
+        //  工具函数
         // ============================================================
         function isPunct(ch) {
             return /[，。！？、；：……—·《》‘’“”（）\.,;:!?'"()\s]/.test(ch);
@@ -1321,7 +1319,7 @@
         }
 
         // ============================================================
-        //  计分
+        //  计分（接收数组，但我们会只传当前项）
         // ============================================================
         function calculateScore(items, answers) {
             let correct = 0, errors = [], total = 0;
@@ -1445,7 +1443,7 @@
         }
 
         // ============================================================
-        //  保存、按钮、提交等
+        //  保存、按钮、提交等（核心修改在 handleSubmit）
         // ============================================================
         function saveCurrentInputs() {
             const inputs = gridEl.querySelectorAll('.char-input');
@@ -1516,9 +1514,12 @@
             }
         }
 
+        // ★★★ 核心修改：只计算当前题目，而非整个批次 ★★★
         function handleSubmit() {
             saveCurrentInputs();
-            const result = calculateScore(batchItems, batchAnswers);
+            const currentItem = getCurrentItem();
+            const currentAnswer = batchAnswers[batchIndex] || '';
+            const result = calculateScore([currentItem], [currentAnswer]);
             currentWrongList = result.errors;
             showScore(result.correct, result.total, result.errors);
         }
