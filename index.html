@@ -5,58 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>拼音小游戏</title>
     <style>
-        /* ===== 全局样式（与之前相同，省略以节省篇幅） ===== */
+        /* ===== 全局样式（柔和护眼版） ===== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #e8f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 16px; }
-        .container { max-width: 500px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); padding: 20px 16px 30px; position: relative; min-height: 80vh; }
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f2ee; /* 暖白底 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: #fefcf8; /* 米白卡 */
+            border-radius: 28px;
+            box-shadow: 0 8px 24px rgba(120, 100, 80, 0.12);
+            padding: 20px 16px 30px;
+            position: relative;
+            min-height: 80vh;
+        }
+
+        /* 开始界面 */
         #startPage { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; }
-        #startPage h1 { font-size: 32px; color: #2c3e50; margin-bottom: 8px; }
-        #startPage p { font-size: 16px; color: #7f8c8d; margin-bottom: 30px; }
-        .start-btn { width: 80%; padding: 18px 0; margin: 10px 0; border: none; border-radius: 50px; font-size: 22px; font-weight: bold; color: white; background: #7fb3d5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.15s; }
-        .start-btn:active { transform: scale(0.95); }
-        .start-btn.words { background: #5bc0de; }
-        .start-btn.sentences { background: #5cb85c; }
-        .start-btn.articles { background: #f0ad4e; }
+        #startPage h1 {
+            font-size: 32px;
+            color: #5a4e42; /* 暖深灰 */
+            margin-bottom: 8px;
+        }
+        #startPage p {
+            font-size: 16px;
+            color: #9a8b7e;
+            margin-bottom: 30px;
+        }
+        .start-btn {
+            width: 80%;
+            padding: 18px 0;
+            margin: 10px 0;
+            border: none;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            background: #b7a99a; /* 基础柔和灰 */
+            box-shadow: 0 4px 8px rgba(150, 130, 110, 0.15);
+            cursor: pointer;
+            transition: transform 0.15s, background 0.2s;
+        }
+        .start-btn:active { transform: scale(0.96); }
+        .start-btn.words { background: #8fb0b5; }    /* 柔绿蓝 */
+        .start-btn.sentences { background: #b5b08a; } /* 柔草绿 */
+        .start-btn.articles { background: #d4b08a; } /* 柔杏黄 */
+
+        /* 游戏界面 */
         #gamePage { display: none; flex-direction: column; }
-        .mode-title { text-align: center; font-size: 18px; font-weight: bold; color: #4a90d9; margin-bottom: 16px; }
-        .char-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 8px; background: #fafafa; padding: 16px 10px; border-radius: 16px; margin-bottom: 16px; min-height: 100px; }
-        .char-item { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 64px; min-height: 96px; padding: 4px 2px; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.06); transition: background 0.2s; flex-shrink: 0; }
-        .char-item.punct { justify-content: center; background: transparent; box-shadow: none; min-height: 96px; width: 40px; }
-        .char-item.punct .char-label { font-size: 28px; color: #999; font-weight: 400; margin-bottom: 0; }
-        .char-item.space { background: transparent; box-shadow: none; width: 20px; min-height: 96px; }
-        .char-label { font-size: 26px; font-weight: 600; color: #2c3e50; line-height: 1.3; margin-bottom: 2px; user-select: none; }
-        .char-item.punct .char-label, .char-item.space .char-label { font-size: 26px; color: #aaa; font-weight: 400; }
-        .char-input { width: 56px; height: 38px; font-size: 18px; text-align: center; border: 2px solid #d0d7de; border-radius: 8px; background: #fefefe; outline: none; transition: border-color 0.2s, background 0.2s; font-family: inherit; }
-        .char-input:focus { border-color: #4a90d9; background: #fff; box-shadow: 0 0 0 3px rgba(74,144,217,0.15); }
-        .char-input.correct { border-color: #5cb85c; background: #eafaf1; }
-        .char-input.wrong { border-color: #d9534f; background: #fdf0ef; }
-        .btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 6px; }
-        .btn { padding: 10px 18px; border: none; border-radius: 30px; font-size: 15px; font-weight: 600; color: white; background: #7fb3d5; cursor: pointer; flex: 1 0 auto; min-width: 70px; transition: background 0.2s, transform 0.1s; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .mode-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #7a6b5e; /* 暖深灰 */
+            margin-bottom: 16px;
+        }
+
+        .char-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px 8px;
+            background: #f6f2ec;
+            padding: 16px 10px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            min-height: 100px;
+        }
+
+        .char-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 64px;
+            min-height: 96px;
+            padding: 4px 2px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(160, 140, 120, 0.08);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .char-item.punct {
+            justify-content: center;
+            background: transparent;
+            box-shadow: none;
+            min-height: 96px;
+            width: 40px;
+        }
+        .char-item.punct .char-label {
+            font-size: 28px;
+            color: #b8aba0; /* 柔灰 */
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        .char-item.space {
+            background: transparent;
+            box-shadow: none;
+            width: 20px;
+            min-height: 96px;
+        }
+
+        .char-label {
+            font-size: 26px;
+            font-weight: 600;
+            color: #4d3f33; /* 深暖灰 */
+            line-height: 1.3;
+            margin-bottom: 2px;
+            user-select: none;
+        }
+        .char-item.punct .char-label,
+        .char-item.space .char-label {
+            font-size: 26px;
+            color: #b8aba0;
+            font-weight: 400;
+        }
+
+        .char-input {
+            width: 56px;
+            height: 38px;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid #d9d0c8;
+            border-radius: 8px;
+            background: #fefcf9;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+            font-family: inherit;
+            color: #3d3329;
+        }
+        .char-input:focus {
+            border-color: #b8a99c;
+            background: #fffcf9;
+            box-shadow: 0 0 0 3px rgba(180, 160, 140, 0.2);
+        }
+        .char-input.correct {
+            border-color: #8fb08a;
+            background: #f2f7ef;
+        }
+        .char-input.wrong {
+            border-color: #d9a8a0;
+            background: #fdf3f1;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: #b7a99a;
+            cursor: pointer;
+            flex: 1 0 auto;
+            min-width: 70px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 6px rgba(140, 120, 100, 0.12);
+        }
         .btn:active { transform: scale(0.96); }
-        .btn-primary { background: #5bc0de; }
-        .btn-success { background: #5cb85c; }
-        .btn-warning { background: #f0ad4e; }
-        .btn-danger { background: #d9534f; }
-        .btn-orange { background: #e67e22; }
-        .btn-home { background: #95a5a6; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 999; }
+        .btn-primary { background: #8fb0b5; }
+        .btn-success { background: #b5b08a; }
+        .btn-warning { background: #d4b08a; }
+        .btn-danger { background: #d9a8a0; }
+        .btn-orange { background: #d4a080; }
+        .btn-home { background: #b7a99a; }
+
+        /* 弹窗 */
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(80,70,60,0.35); justify-content: center; align-items: center; z-index:999; }
         .overlay.active { display: flex; }
-        .modal { background: white; border-radius: 28px; padding: 32px 24px 24px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
-        .modal h2 { font-size: 28px; margin-bottom: 8px; }
-        .modal .score-number { font-size: 48px; font-weight: bold; color: #5cb85c; }
-        .modal .score-number.low { color: #d9534f; }
-        .modal .detail { font-size: 16px; color: #555; margin: 8px 0 16px; }
-        .modal .wrong-btn { background: #f0ad4e; color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; cursor: pointer; margin-bottom: 12px; }
+        .modal {
+            background: #fefcf8;
+            border-radius: 28px;
+            padding: 32px 24px 24px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(80,60,40,0.2);
+        }
+        .modal h2 { font-size: 28px; color: #5a4e42; margin-bottom: 8px; }
+        .modal .score-number { font-size: 48px; font-weight: bold; color: #b5b08a; }
+        .modal .score-number.low { color: #d9a8a0; }
+        .modal .detail { font-size: 16px; color: #8a7b6e; margin: 8px 0 16px; }
+        .modal .wrong-btn {
+            background: #d4b08a;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
         .modal .btn-group-modal { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .modal .btn-group-modal .btn { flex: 1; min-width: 80px; }
-        .wrong-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal .btn-group-modal .btn { flex:1; min-width:80px; }
+
+        .wrong-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(80,70,60,0.45); justify-content: center; align-items: center; z-index:1000; }
         .wrong-overlay.active { display: flex; }
-        .wrong-modal { background: white; border-radius: 28px; padding: 24px 20px; max-width: 400px; width: 90%; max-height: 70vh; overflow-y: auto; }
-        .wrong-modal h3 { color: #c0392b; margin-bottom: 12px; }
-        .wrong-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 16px; }
-        .wrong-item .ch { font-weight: bold; font-size: 20px; }
-        .wrong-item .correct { color: #5cb85c; }
-        .wrong-item .user { color: #d9534f; }
+        .wrong-modal {
+            background: #fefcf8;
+            border-radius: 28px;
+            padding: 24px 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .wrong-modal h3 { color: #b08a7a; margin-bottom: 12px; }
+        .wrong-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #ede7e0; font-size: 16px; }
+        .wrong-item .ch { font-weight: bold; font-size: 20px; color: #4d3f33; }
+        .wrong-item .correct { color: #8fb08a; }
+        .wrong-item .user { color: #d9a8a0; }
+
+        /* 响应式微调 */
         @media (max-width: 480px) {
             .char-item { width: 52px; min-height: 84px; padding: 2px 1px; }
             .char-item.punct { width: 32px; min-height: 84px; }
@@ -103,7 +279,7 @@
             <div class="score-number" id="scoreNum">0</div>
             <div class="detail" id="scoreDetail">正确 0 / 0 字</div>
             <button class="wrong-btn" id="viewWrongBtn" style="display:none;">📖 查看错题</button>
-            <div id="perfectMsg" style="display:none; color:#5cb85c; font-size:20px; margin:8px 0;">🎉 全部正确！太棒了！</div>
+            <div id="perfectMsg" style="display:none; color:#b5b08a; font-size:20px; margin:8px 0;">🎉 全部正确！太棒了！</div>
             <div class="btn-group-modal">
                 <button class="btn btn-primary" id="nextRoundBtn">➡️ 下一题</button>
                 <button class="btn btn-home" id="closeScoreBtn">关闭</button>
@@ -1062,17 +1238,14 @@
         ];
 
         // ============================================================
-        //  工具函数（正确处理标点和空格）
+        //  工具函数
         // ============================================================
         function isPunct(ch) {
             return /[，。！？、；：……—·《》‘’“”（）\.,;:!?'"()\s]/.test(ch);
         }
-
-        // 只返回在字典中且不是标点的字符（即需要输入拼音的汉字）
         function getValidChars(text) {
             return [...text].filter(ch => PINYIN_DICT[ch] !== undefined && !isPunct(ch));
         }
-
         function splitPinyinInput(str) {
             return str.trim().split(/\s+/).filter(s => s !== '');
         }
@@ -1138,7 +1311,7 @@
         }
 
         // ============================================================
-        //  计分（只统计 getValidChars 返回的汉字）
+        //  计分
         // ============================================================
         function calculateScore(items, answers) {
             let correct = 0, errors = [], total = 0;
@@ -1159,11 +1332,11 @@
         }
 
         // ============================================================
-        //  渲染（正确处理标点和空格）
+        //  渲染
         // ============================================================
         function render() {
             const fullText = getCurrentItem();
-            const chars = getCurrentChars(); // 仅汉字（用于恢复答案）
+            const chars = getCurrentChars();
             const modeNames = { words: '词语练习 (5个一组)', sentences: '句子练习 (3句一组)', articles: '文章练习' };
             modeTitle.textContent = modeNames[currentMode] || '练习';
 
@@ -1174,7 +1347,6 @@
                 const div = document.createElement('div');
                 div.className = 'char-item';
 
-                // 1. 标点
                 if (isPunct(ch)) {
                     div.classList.add('punct');
                     const label = document.createElement('div');
@@ -1185,14 +1357,12 @@
                     continue;
                 }
 
-                // 2. 空格
                 if (ch === ' ') {
                     div.classList.add('space');
                     gridEl.appendChild(div);
                     continue;
                 }
 
-                // 3. 汉字（若不在字典中只显示，不提供输入框）
                 if (!PINYIN_DICT[ch]) {
                     const label = document.createElement('div');
                     label.className = 'char-label';
@@ -1202,7 +1372,7 @@
                     continue;
                 }
 
-                // 4. 正常汉字
+                // 正常汉字
                 const label = document.createElement('div');
                 label.className = 'char-label';
                 label.textContent = ch;
@@ -1214,7 +1384,6 @@
                 input.dataset.char = ch;
                 input.dataset.idx = i;
 
-                // 恢复答案
                 const charIndex = chars.indexOf(ch);
                 if (charIndex !== -1) {
                     const saved = batchAnswers[batchIndex] || '';
@@ -1222,7 +1391,6 @@
                     if (charIndex < parts.length) input.value = parts[charIndex];
                 }
 
-                // 实时反馈
                 input.addEventListener('input', function() {
                     const ch = this.dataset.char;
                     const correct = PINYIN_DICT[ch] || '';
@@ -1235,7 +1403,6 @@
                     }
                 });
 
-                // 键盘导航
                 input.addEventListener('keydown', function(e) {
                     const inputs = gridEl.querySelectorAll('.char-input');
                     const idx = parseInt(this.dataset.idx);
@@ -1261,7 +1428,6 @@
                 gridEl.appendChild(div);
             }
 
-            // 聚焦第一个输入框
             const firstInput = gridEl.querySelector('.char-input');
             if (firstInput) setTimeout(() => firstInput.focus(), 100);
 
@@ -1269,7 +1435,7 @@
         }
 
         // ============================================================
-        //  保存当前所有输入
+        //  保存、按钮、提交等（与之前相同，未改动逻辑）
         // ============================================================
         function saveCurrentInputs() {
             const inputs = gridEl.querySelectorAll('.char-input');
@@ -1278,9 +1444,6 @@
             saveCurrentAnswer(parts.join(' '));
         }
 
-        // ============================================================
-        //  按钮渲染
-        // ============================================================
         function renderButtons() {
             btnGroup.innerHTML = '';
             const homeBtn = document.createElement('button');
@@ -1350,9 +1513,6 @@
             showScore(result.correct, result.total, result.errors);
         }
 
-        // ============================================================
-        //  得分弹窗
-        // ============================================================
         function showScore(correct, total, errors) {
             const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
             scoreNum.textContent = percent + ' 分';
@@ -1389,9 +1549,6 @@
         }
         function closeWrong() { wrongOverlay.classList.remove('active'); }
 
-        // ============================================================
-        //  页面切换
-        // ============================================================
         function goHome() {
             gamePage.style.display = 'none';
             startPage.style.display = 'flex';
