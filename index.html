@@ -1319,7 +1319,7 @@
         }
 
         // ============================================================
-        //  计分（接收数组，但我们会只传当前项）
+        //  计分
         // ============================================================
         function calculateScore(items, answers) {
             let correct = 0, errors = [], total = 0;
@@ -1443,7 +1443,7 @@
         }
 
         // ============================================================
-        //  保存、按钮、提交等（核心修改在 handleSubmit）
+        //  保存、按钮、提交
         // ============================================================
         function saveCurrentInputs() {
             const inputs = gridEl.querySelectorAll('.char-input');
@@ -1514,12 +1514,12 @@
             }
         }
 
-        // ★★★ 核心修改：只计算当前题目，而非整个批次 ★★★
+        // ============================================================
+        //  ★★★ 提交：计算整个批次（5个词语 或 3个句子）★★★
+        // ============================================================
         function handleSubmit() {
             saveCurrentInputs();
-            const currentItem = getCurrentItem();
-            const currentAnswer = batchAnswers[batchIndex] || '';
-            const result = calculateScore([currentItem], [currentAnswer]);
+            const result = calculateScore(batchItems, batchAnswers);
             currentWrongList = result.errors;
             showScore(result.correct, result.total, result.errors);
         }
