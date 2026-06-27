@@ -29,7 +29,14 @@
         }
 
         /* 开始界面 */
-        #startPage { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; position: relative; }
+        #startPage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            position: relative;
+        }
         #startPage h1 {
             font-size: 32px;
             color: #2c3e50;
@@ -59,19 +66,43 @@
         .start-btn.sentences { background: #5cb85c; }
         .start-btn.articles { background: #f0ad4e; }
 
-        /* 设置按钮（齿轮） */
+        /* 设置按钮（齿轮） - 通用样式 */
         .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             background: none;
             border: none;
             font-size: 28px;
             cursor: pointer;
             color: #7f8c8d;
             transition: transform 0.2s;
+            padding: 4px 8px;
+            line-height: 1;
         }
         .settings-btn:hover { transform: rotate(60deg); }
+        .settings-btn:active { transform: scale(0.9); }
+
+        /* 开始界面的设置按钮 */
+        #startPage .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        /* 游戏界面的设置按钮 */
+        #gamePage .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #4a90d9;
+        }
+
+        /* 游戏界面需要相对定位 */
+        #gamePage {
+            display: none;
+            flex-direction: column;
+            position: relative;
+            padding-top: 8px;
+        }
 
         /* 设置弹窗 */
         .settings-overlay {
@@ -132,14 +163,14 @@
             margin-top: 8px;
         }
 
-        /* 游戏界面（与之前相同） */
-        #gamePage { display: none; flex-direction: column; }
+        /* 游戏界面其他样式 */
         .mode-title {
             text-align: center;
             font-size: 18px;
             font-weight: bold;
             color: #4a90d9;
             margin-bottom: 16px;
+            margin-top: 4px;
         }
 
         .char-grid {
@@ -323,6 +354,7 @@
             .btn { font-size: 13px; padding: 8px 12px; min-width: 60px; }
             .start-btn { font-size: 18px; padding: 14px 0; }
             .modal .score-number { font-size: 38px; }
+            #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
         }
         @media (max-width: 380px) {
             .char-item { width: 44px; min-height: 74px; }
@@ -338,9 +370,7 @@
     <div class="container">
         <!-- ===== 开始界面 ===== -->
         <div id="startPage">
-            <!-- 设置按钮（齿轮） -->
             <button class="settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
-
             <h1>📚 拼音小游戏</h1>
             <p>选择一种模式，开始挑战吧！</p>
             <button class="start-btn words" data-mode="words">📝 词语练习</button>
@@ -350,6 +380,8 @@
 
         <!-- ===== 游戏界面 ===== -->
         <div id="gamePage">
+            <!-- 游戏界面的设置按钮 -->
+            <button class="settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
             <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
             <div id="charGrid" class="char-grid"></div>
             <div class="btn-group" id="btnGroup"></div>
@@ -1337,7 +1369,7 @@
         // ============================================================
         //  全局设置状态
         // ============================================================
-        let keyboardEnabled = true; // true = 允许弹出虚拟键盘（默认），false = 禁用
+        let keyboardEnabled = true;
 
         // ============================================================
         //  工具函数
@@ -1383,18 +1415,22 @@
 
         // 设置相关 DOM
         const settingsToggleBtn = document.getElementById('settingsToggleBtn');
+        const settingsToggleBtnGame = document.getElementById('settingsToggleBtnGame');
         const settingsOverlay = document.getElementById('settingsOverlay');
         const enableKeyboardBtn = document.getElementById('enableKeyboardBtn');
         const disableKeyboardBtn = document.getElementById('disableKeyboardBtn');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
         // ============================================================
-        //  设置面板事件
+        //  设置面板事件（两个按钮共用同一个弹窗）
         // ============================================================
-        settingsToggleBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
+        function openSettings(e) {
+            if (e) e.stopPropagation();
             settingsOverlay.classList.add('active');
-        });
+        }
+
+        settingsToggleBtn.addEventListener('click', openSettings);
+        settingsToggleBtnGame.addEventListener('click', openSettings);
 
         function closeSettings() {
             settingsOverlay.classList.remove('active');
@@ -1405,18 +1441,15 @@
             if (e.target === this) closeSettings();
         });
 
-        // 开启键盘（允许软键盘）
         enableKeyboardBtn.addEventListener('click', function() {
             keyboardEnabled = true;
             alert('✅ 已开启手机键盘（虚拟键盘将正常弹出）');
             closeSettings();
-            // 如果当前在游戏页面，重新渲染当前项，使所有输入框应用新设置
             if (gamePage.style.display !== 'none') {
                 render();
             }
         });
 
-        // 关闭键盘（禁止软键盘）
         disableKeyboardBtn.addEventListener('click', function() {
             keyboardEnabled = false;
             alert('✅ 已关闭手机键盘（虚拟键盘将不再弹出，请使用外接键盘）');
@@ -1427,7 +1460,7 @@
         });
 
         // ============================================================
-        //  游戏核心函数（与之前相同，仅 render 中增加 inputmode 控制）
+        //  游戏核心函数
         // ============================================================
         function getPool() {
             if (currentMode === 'words') return WORDS_POOL;
@@ -1482,7 +1515,7 @@
         }
 
         // ============================================================
-        //  渲染（关键修改：根据 keyboardEnabled 设置 inputmode）
+        //  渲染
         // ============================================================
         function render() {
             const fullText = getCurrentItem();
@@ -1532,11 +1565,7 @@
                 input.type = 'text';
                 input.maxLength = 10;
                 // ★★★ 根据设置决定是否禁用虚拟键盘 ★★★
-                if (!keyboardEnabled) {
-                    input.inputMode = 'none';
-                } else {
-                    input.inputMode = 'text'; // 默认允许弹出
-                }
+                input.inputMode = keyboardEnabled ? 'text' : 'none';
                 input.dataset.char = ch;
                 input.dataset.idx = i;
 
@@ -1591,7 +1620,7 @@
         }
 
         // ============================================================
-        //  保存、按钮、提交（与之前完全相同）
+        //  保存、按钮、提交
         // ============================================================
         function saveCurrentInputs() {
             const inputs = gridEl.querySelectorAll('.char-input');
