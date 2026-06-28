@@ -73,35 +73,33 @@
         .start-btn.sentences { background: #5cb85c; }
         .start-btn.articles { background: #f0ad4e; }
 
-        /* 顶部按钮（设置 + 音乐） */
-        .top-btn {
+        /* 设置按钮（仅保留齿轮） */
+        .settings-btn {
             background: none;
             border: none;
-            font-size: 26px;
+            font-size: 28px;
             cursor: pointer;
             color: #7f8c8d;
             transition: transform 0.2s;
-            padding: 4px 6px;
+            padding: 4px 8px;
             line-height: 1;
         }
-        .top-btn:hover { transform: scale(1.1); }
-        .top-btn:active { transform: scale(0.9); }
+        .settings-btn:hover { transform: rotate(60deg); }
+        .settings-btn:active { transform: scale(0.9); }
 
-        #startPage .top-btn {
+        #startPage .settings-btn {
             position: absolute;
             top: 10px;
+            right: 10px;
         }
-        #startPage .settings-btn { right: 10px; }
-        #startPage .music-btn { right: 60px; }
 
-        #gamePage .top-btn {
+        #gamePage .settings-btn {
             position: absolute;
             top: 10px;
-            font-size: 22px;
+            right: 10px;
+            font-size: 24px;
             color: #4a90d9;
         }
-        #gamePage .settings-btn { right: 10px; }
-        #gamePage .music-btn { right: 50px; }
 
         #gamePage {
             display: none;
@@ -158,6 +156,8 @@
         .settings-modal .btn-group .btn:active { transform: scale(0.96); }
         .settings-modal .btn-group .btn-on { background: #5cb85c; }
         .settings-modal .btn-group .btn-off { background: #d9534f; }
+        .settings-modal .btn-group .btn-music-on { background: #5bc0de; }
+        .settings-modal .btn-group .btn-music-off { background: #95a5a6; }
         .settings-modal .btn-close {
             background: #95a5a6;
             color: white;
@@ -360,9 +360,7 @@
             .char-grid { padding: 10px 8px; gap: 4px 6px; }
             .btn { font-size: 13px; padding: 6px 12px; min-width: 60px; }
             .mode-title { font-size: 16px; margin-bottom: 10px; }
-            #gamePage .top-btn { font-size: 18px; top: 6px; }
-            #gamePage .settings-btn { right: 6px; }
-            #gamePage .music-btn { right: 44px; }
+            #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
         }
 
         /* 响应式 */
@@ -376,9 +374,7 @@
             .btn { font-size: 13px; padding: 8px 12px; min-width: 60px; }
             .start-btn { font-size: 18px; padding: 14px 0; }
             .modal .score-number { font-size: 38px; }
-            #gamePage .top-btn { font-size: 18px; top: 6px; }
-            #gamePage .settings-btn { right: 6px; }
-            #gamePage .music-btn { right: 44px; }
+            #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
         }
         @media (max-width: 380px) {
             .char-item { width: 44px; min-height: 74px; }
@@ -394,8 +390,7 @@
     <div class="container">
         <!-- ===== 开始界面 ===== -->
         <div id="startPage">
-            <button class="top-btn music-btn" id="musicToggleBtn" title="音乐开关">🔇</button>
-            <button class="top-btn settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
+            <button class="settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
             <h1>📚 拼音小游戏</h1>
             <p>选择一种模式，开始挑战吧！</p>
             <button class="start-btn words" data-mode="words">📝 词语练习</button>
@@ -405,22 +400,27 @@
 
         <!-- ===== 游戏界面 ===== -->
         <div id="gamePage">
-            <button class="top-btn music-btn" id="musicToggleBtnGame" title="音乐开关">🔇</button>
-            <button class="top-btn settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
+            <button class="settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
             <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
             <div id="charGrid" class="char-grid"></div>
             <div class="btn-group" id="btnGroup"></div>
         </div>
     </div>
 
-    <!-- ===== 设置弹窗 ===== -->
+    <!-- ===== 设置弹窗（包含键盘和音乐控制） ===== -->
     <div class="settings-overlay" id="settingsOverlay">
         <div class="settings-modal">
-            <h2>⚙️ 键盘设置</h2>
-            <p style="color:#555; font-size:14px; margin-bottom:16px;">切换是否允许手机弹出虚拟键盘</p>
+            <h2>⚙️ 设置</h2>
+            <p style="color:#555; font-size:14px; margin-bottom:16px;">键盘设置</p>
             <div class="btn-group">
                 <button class="btn btn-on" id="enableKeyboardBtn">📱 开启手机键盘</button>
                 <button class="btn btn-off" id="disableKeyboardBtn">⌨️ 关闭手机键盘</button>
+            </div>
+            <hr style="border:0; border-top:1px solid #eee; margin:16px 0;">
+            <p style="color:#555; font-size:14px; margin-bottom:16px;">音乐控制</p>
+            <div class="btn-group">
+                <button class="btn btn-music-on" id="enableMusicBtn">🔊 开启音乐</button>
+                <button class="btn btn-music-off" id="disableMusicBtn">🔇 关闭音乐</button>
             </div>
             <button class="btn-close" id="closeSettingsBtn">关闭</button>
         </div>
@@ -1397,7 +1397,7 @@
             `森林里要开音乐会，小鸟们都一展歌喉。小麻雀不会唱，很自卑，躲在角落里。猫头鹰老师说，每种鸟都有特长，你虽然没有好嗓子，但你飞得又快又灵巧。麻雀听了，主动承担起传递消息的工作，帮大家通知时间和地点，还帮蝴蝶运送花瓣做舞台。音乐会非常成功，大家都夸麻雀是最棒的后勤。麻雀终于明白，每个人都有自己的闪光点，不用和别人比唱歌。找到自己的价值，同样能收获快乐和尊重。`
         ];
 
-                // ============================================================
+        // ============================================================
         //  全局设置
         // ============================================================
         let keyboardEnabled = true;
@@ -1449,8 +1449,6 @@
 
         // 音乐相关
         const bgmAudio = document.getElementById('bgm');
-        const musicToggleBtn = document.getElementById('musicToggleBtn');
-        const musicToggleBtnGame = document.getElementById('musicToggleBtnGame');
 
         // 设置相关
         const settingsToggleBtn = document.getElementById('settingsToggleBtn');
@@ -1458,41 +1456,73 @@
         const settingsOverlay = document.getElementById('settingsOverlay');
         const enableKeyboardBtn = document.getElementById('enableKeyboardBtn');
         const disableKeyboardBtn = document.getElementById('disableKeyboardBtn');
+        const enableMusicBtn = document.getElementById('enableMusicBtn');
+        const disableMusicBtn = document.getElementById('disableMusicBtn');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
         // ============================================================
-        //  音乐控制（按钮控制播放/暂停）
+        //  音乐控制（核心）
         // ============================================================
+        function playMusic() {
+            if (isMusicPlaying) return;
+            bgmAudio.play().then(() => {
+                isMusicPlaying = true;
+                console.log('🎵 音乐已开启');
+            }).catch((error) => {
+                console.log('播放失败:', error);
+                alert('⚠️ 无法播放音乐，请检查 bgm.mp3 是否已上传，或点击页面任意位置重试');
+            });
+        }
+
+        function pauseMusic() {
+            if (!isMusicPlaying) return;
+            bgmAudio.pause();
+            isMusicPlaying = false;
+            console.log('🔇 音乐已关闭');
+        }
+
+        // 切换音乐状态（开启/关闭）
         function toggleMusic() {
             if (isMusicPlaying) {
-                bgmAudio.pause();
-                isMusicPlaying = false;
-                updateMusicIcon();
+                pauseMusic();
             } else {
-                bgmAudio.play().then(() => {
-                    isMusicPlaying = true;
-                    updateMusicIcon();
-                }).catch((error) => {
-                    console.log('播放失败:', error);
-                    alert('⚠️ 无法播放音乐，请检查 bgm.mp3 是否已上传');
-                });
+                playMusic();
             }
         }
 
-        function updateMusicIcon() {
-            const icon = isMusicPlaying ? '🔊' : '🔇';
-            musicToggleBtn.textContent = icon;
-            musicToggleBtnGame.textContent = icon;
-        }
-
-        musicToggleBtn.addEventListener('click', function(e) {
+        // 开启音乐按钮
+        enableMusicBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            toggleMusic();
+            playMusic();
+            closeSettings();
         });
 
-        musicToggleBtnGame.addEventListener('click', function(e) {
+        // 关闭音乐按钮
+        disableMusicBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            toggleMusic();
+            pauseMusic();
+            closeSettings();
+        });
+
+        // ============================================================
+        //  用户首次点击页面尝试自动播放（实现“默认开启”）
+        // ============================================================
+        // 在用户首次点击页面任何位置时，尝试播放音乐
+        // 使用一次性监听器，播放后移除
+        document.addEventListener('click', function firstClick() {
+            if (!isMusicPlaying) {
+                playMusic();
+            }
+            document.removeEventListener('click', firstClick);
+        }, { once: true });
+
+        // 另外，当用户点击“开始游戏”按钮时，也尝试播放（确保音乐能启动）
+        document.querySelectorAll('.start-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!isMusicPlaying) {
+                    playMusic();
+                }
+            });
         });
 
         // ============================================================
@@ -1836,11 +1866,7 @@
         // ============================================================
         //  事件绑定
         // ============================================================
-        document.querySelectorAll('.start-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                startGame(this.dataset.mode);
-            });
-        });
+        // 开始按钮已在上方绑定，这里不再重复
 
         viewWrongBtn.addEventListener('click', showWrongList);
         closeWrongBtn.addEventListener('click', closeWrong);
