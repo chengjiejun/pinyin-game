@@ -266,7 +266,7 @@
         }
         .tutorial-modal .btn-close-tutorial:hover { background: #7f8c8d; }
 
-        /* ===== 熟悉键盘弹窗 ===== */
+        /* ===== 熟悉键盘弹窗（含初始指法指导） ===== */
         .keyboard-practice-overlay {
             display: none;
             position: fixed;
@@ -294,25 +294,49 @@
         .keyboard-practice-modal h2 {
             font-size: 24px;
             color: #2c3e50;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         .keyboard-practice-modal .subtitle {
             font-size: 15px;
             color: #888;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
         .keyboard-practice-modal .current-key {
-            font-size: 48px;
+            font-size: 30px;
             font-weight: bold;
             color: #4a90d9;
-            min-height: 60px;
-            margin-bottom: 10px;
+            min-height: 70px;
+            margin-bottom: 6px;
+            padding: 8px;
+            background: #f5f8fa;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+        .keyboard-practice-modal .current-key .finger-hint {
+            font-size: 20px;
+            color: #2c3e50;
+            display: block;
+        }
+        .keyboard-practice-modal .initial-guide {
+            background: #fff8e1;
+            border-left: 4px solid #ffb74d;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 12px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .keyboard-practice-modal .initial-guide strong {
+            color: #d9534f;
         }
         .keyboard-practice-modal .keyboard-row {
             display: flex;
             justify-content: center;
             gap: 6px;
             margin-bottom: 6px;
+            flex-wrap: wrap;
         }
         .keyboard-practice-modal .key {
             min-width: 36px;
@@ -330,18 +354,84 @@
             user-select: none;
             padding: 0 6px;
             flex-shrink: 0;
+            position: relative;
         }
-        .keyboard-practice-modal .key.highlight {
-            border-color: #4a90d9;
-            background: #d4e4f7;
-            color: #1a3a5a;
-            transform: scale(1.08);
-            box-shadow: 0 0 12px rgba(74,144,217,0.4);
+        /* 手指颜色（柔和） */
+        .key.finger-little-left { background: #d5e8d0; border-color: #8fb08a; }
+        .key.finger-ring-left { background: #c9e4e8; border-color: #7fa8b0; }
+        .key.finger-middle-left { background: #fce4c8; border-color: #e8b88a; }
+        .key.finger-index-left { background: #d5c8f0; border-color: #a890d0; }
+        .key.finger-index-right { background: #f0c8d5; border-color: #d08aa8; }
+        .key.finger-middle-right { background: #fce4c8; border-color: #e8b88a; }
+        .key.finger-ring-right { background: #c9e4e8; border-color: #7fa8b0; }
+        .key.finger-little-right { background: #d5e8d0; border-color: #8fb08a; }
+        .key.finger-thumb { background: #e8e8e8; border-color: #b0b0b0; }
+
+        /* 高亮按键 */
+        .key.highlight {
+            border-color: #4a90d9 !important;
+            background: #d4e4f7 !important;
+            color: #1a3a5a !important;
+            transform: scale(1.10);
+            box-shadow: 0 0 16px rgba(74,144,217,0.5);
+            z-index: 10;
         }
-        .keyboard-practice-modal .key.space-key {
+        /* 基准键（F和J）特殊标记：红色虚线边框 + 凸起标记 */
+        .key.home-key {
+            border-color: #d9534f !important;
+            border-style: dashed;
+            border-width: 3px;
+            position: relative;
+        }
+        .key.home-key::after {
+            content: "凸起";
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #d9534f;
+            font-weight: bold;
+            white-space: nowrap;
+            background: rgba(255,255,255,0.8);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+        .key.space-key {
             min-width: 120px;
         }
-        .keyboard-practice-modal .btn-close-practice {
+        .key .finger-label {
+            position: absolute;
+            bottom: 2px;
+            font-size: 8px;
+            color: #666;
+            line-height: 1;
+            font-weight: 400;
+        }
+        /* 图例 */
+        .finger-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 18px;
+            margin: 14px 0 10px 0;
+            padding: 10px;
+            background: #f5f8fa;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .finger-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .finger-legend .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .btn-close-practice {
             background: #95a5a6;
             color: white;
             border: none;
@@ -350,10 +440,10 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 16px;
             transition: background 0.2s;
         }
-        .keyboard-practice-modal .btn-close-practice:hover { background: #7f8c8d; }
+        .btn-close-practice:hover { background: #7f8c8d; }
 
         /* 游戏界面样式 (保持不变) */
         .mode-title {
@@ -545,6 +635,11 @@
             .keyboard-practice-btn { font-size: 14px; padding: 4px 10px; top: 6px; left: 6px; }
             .keyboard-practice-modal .key { min-width: 28px; height: 36px; font-size: 14px; }
             .keyboard-practice-modal .key.space-key { min-width: 80px; }
+            .keyboard-practice-modal .key .finger-label { font-size: 7px; }
+            .finger-legend { font-size: 12px; gap: 8px 12px; }
+            .keyboard-practice-modal .initial-guide { font-size: 14px; padding: 6px 12px; }
+            .keyboard-practice-modal .current-key { font-size: 24px; min-height: 60px; }
+            .keyboard-practice-modal .current-key .finger-hint { font-size: 16px; }
         }
         @media (max-width: 480px) {
             .char-item { width: 52px; min-height: 84px; padding: 2px 1px; }
@@ -558,8 +653,14 @@
             .modal .score-number { font-size: 38px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
             .keyboard-practice-btn { font-size: 13px; padding: 4px 8px; top: 6px; left: 6px; }
-            .keyboard-practice-modal .key { min-width: 24px; height: 32px; font-size: 12px; }
+            .keyboard-practice-modal .key { min-width: 26px; height: 34px; font-size: 13px; }
             .keyboard-practice-modal .key.space-key { min-width: 60px; }
+            .keyboard-practice-modal .key .finger-label { font-size: 7px; }
+            .finger-legend { font-size: 11px; gap: 6px 10px; }
+            .finger-legend .color-box { width: 16px; height: 16px; }
+            .keyboard-practice-modal .initial-guide { font-size: 13px; padding: 6px 10px; }
+            .keyboard-practice-modal .current-key { font-size: 22px; min-height: 55px; }
+            .keyboard-practice-modal .current-key .finger-hint { font-size: 15px; }
         }
         @media (max-width: 380px) {
             .char-item { width: 44px; min-height: 74px; }
@@ -568,8 +669,12 @@
             .char-label { font-size: 18px; }
             .char-item.punct .char-label, .char-item.space .char-label { font-size: 18px; }
             .char-input { width: 40px; height: 30px; font-size: 14px; }
-            .keyboard-practice-modal .key { min-width: 20px; height: 28px; font-size: 11px; }
+            .keyboard-practice-modal .key { min-width: 22px; height: 30px; font-size: 11px; }
             .keyboard-practice-modal .key.space-key { min-width: 50px; }
+            .keyboard-practice-modal .key .finger-label { font-size: 6px; }
+            .keyboard-practice-modal .initial-guide { font-size: 12px; padding: 4px 8px; }
+            .keyboard-practice-modal .current-key { font-size: 18px; min-height: 50px; }
+            .keyboard-practice-modal .current-key .finger-hint { font-size: 14px; }
         }
     </style>
 </head>
@@ -653,54 +758,75 @@
         </div>
     </div>
 
-    <!-- ===== 熟悉键盘弹窗 ===== -->
+    <!-- ===== 熟悉键盘弹窗（含初始指法指导） ===== -->
     <div class="keyboard-practice-overlay" id="keyboardPracticeOverlay">
         <div class="keyboard-practice-modal">
             <h2>⌨️ 熟悉键盘</h2>
-            <p class="subtitle">按下外接键盘上的任意字母键，看看它在哪里！</p>
-            <div class="current-key" id="currentKeyDisplay">按下按键试试</div>
+            <p class="subtitle">按下外接键盘上的任意字母键或空格，看看应该用哪根手指</p>
+
+            <!-- 初始指法指导 -->
+            <div class="initial-guide">
+                ✋ <strong>初始手指放置：</strong>将左右手食指分别放在 <strong>F</strong> 和 <strong>J</strong> 键上（键上有小凸起），其他手指依次放在相邻的基准键上。<br>
+                <span style="font-size:0.9em; color:#666;">左手小指→A，无名指→S，中指→D，食指→F；右手食指→J，中指→K，无名指→L，小指→；</span>
+            </div>
+
+            <div class="current-key" id="currentKeyDisplay">
+                按下按键试试
+                <span class="finger-hint" id="fingerHint"></span>
+            </div>
 
             <!-- 键盘布局（QWERTY 三行 + 空格） -->
             <div id="keyboardContainer">
                 <!-- 第一行 -->
                 <div class="keyboard-row" id="row1">
-                    <span class="key" data-key="q">Q</span>
-                    <span class="key" data-key="w">W</span>
-                    <span class="key" data-key="e">E</span>
-                    <span class="key" data-key="r">R</span>
-                    <span class="key" data-key="t">T</span>
-                    <span class="key" data-key="y">Y</span>
-                    <span class="key" data-key="u">U</span>
-                    <span class="key" data-key="i">I</span>
-                    <span class="key" data-key="o">O</span>
-                    <span class="key" data-key="p">P</span>
+                    <span class="key finger-little-left" data-key="q" data-finger="左手小指">Q</span>
+                    <span class="key finger-ring-left" data-key="w" data-finger="左手无名指">W</span>
+                    <span class="key finger-middle-left" data-key="e" data-finger="左手中指">E</span>
+                    <span class="key finger-index-left" data-key="r" data-finger="左手食指">R</span>
+                    <span class="key finger-index-left" data-key="t" data-finger="左手食指">T</span>
+                    <span class="key finger-index-right" data-key="y" data-finger="右手食指">Y</span>
+                    <span class="key finger-index-right" data-key="u" data-finger="右手食指">U</span>
+                    <span class="key finger-middle-right" data-key="i" data-finger="右手中指">I</span>
+                    <span class="key finger-ring-right" data-key="o" data-finger="右手无名指">O</span>
+                    <span class="key finger-little-right" data-key="p" data-finger="右手小指">P</span>
                 </div>
-                <!-- 第二行 -->
+                <!-- 第二行（基准行） -->
                 <div class="keyboard-row" id="row2">
-                    <span class="key" data-key="a">A</span>
-                    <span class="key" data-key="s">S</span>
-                    <span class="key" data-key="d">D</span>
-                    <span class="key" data-key="f">F</span>
-                    <span class="key" data-key="g">G</span>
-                    <span class="key" data-key="h">H</span>
-                    <span class="key" data-key="j">J</span>
-                    <span class="key" data-key="k">K</span>
-                    <span class="key" data-key="l">L</span>
+                    <span class="key finger-little-left" data-key="a" data-finger="左手小指">A</span>
+                    <span class="key finger-ring-left" data-key="s" data-finger="左手无名指">S</span>
+                    <span class="key finger-middle-left" data-key="d" data-finger="左手中指">D</span>
+                    <span class="key finger-index-left home-key" data-key="f" data-finger="左手食指">F</span>
+                    <span class="key finger-index-left" data-key="g" data-finger="左手食指">G</span>
+                    <span class="key finger-index-right" data-key="h" data-finger="右手食指">H</span>
+                    <span class="key finger-index-right home-key" data-key="j" data-finger="右手食指">J</span>
+                    <span class="key finger-middle-right" data-key="k" data-finger="右手中指">K</span>
+                    <span class="key finger-ring-right" data-key="l" data-finger="右手无名指">L</span>
                 </div>
                 <!-- 第三行 -->
                 <div class="keyboard-row" id="row3">
-                    <span class="key" data-key="z">Z</span>
-                    <span class="key" data-key="x">X</span>
-                    <span class="key" data-key="c">C</span>
-                    <span class="key" data-key="v">V</span>
-                    <span class="key" data-key="b">B</span>
-                    <span class="key" data-key="n">N</span>
-                    <span class="key" data-key="m">M</span>
+                    <span class="key finger-little-left" data-key="z" data-finger="左手小指">Z</span>
+                    <span class="key finger-ring-left" data-key="x" data-finger="左手无名指">X</span>
+                    <span class="key finger-middle-left" data-key="c" data-finger="左手中指">C</span>
+                    <span class="key finger-index-left" data-key="v" data-finger="左手食指">V</span>
+                    <span class="key finger-index-left" data-key="b" data-finger="左手食指">B</span>
+                    <span class="key finger-index-right" data-key="n" data-finger="右手食指">N</span>
+                    <span class="key finger-index-right" data-key="m" data-finger="右手食指">M</span>
                 </div>
                 <!-- 空格键 -->
                 <div class="keyboard-row">
-                    <span class="key space-key" data-key=" ">空格</span>
+                    <span class="key space-key finger-thumb" data-key=" " data-finger="大拇指（左右均可）">空格</span>
                 </div>
+            </div>
+
+            <!-- 图例 -->
+            <div class="finger-legend">
+                <span class="legend-item"><span class="color-box" style="background:#d5e8d0;"></span> 小指</span>
+                <span class="legend-item"><span class="color-box" style="background:#c9e4e8;"></span> 无名指</span>
+                <span class="legend-item"><span class="color-box" style="background:#fce4c8;"></span> 中指</span>
+                <span class="legend-item"><span class="color-box" style="background:#d5c8f0;"></span> 左手食指</span>
+                <span class="legend-item"><span class="color-box" style="background:#f0c8d5;"></span> 右手食指</span>
+                <span class="legend-item"><span class="color-box" style="background:#e8e8e8;"></span> 大拇指</span>
+                <span class="legend-item"><span class="color-box" style="background:transparent; border:2px dashed #d9534f; width:18px; height:18px;"></span> 基准键 (F/J)</span>
             </div>
 
             <button class="btn-close-practice" id="closePracticeBtn">关闭</button>
@@ -1751,6 +1877,7 @@
         const keyboardPracticeOverlay = document.getElementById('keyboardPracticeOverlay');
         const closePracticeBtn = document.getElementById('closePracticeBtn');
         const currentKeyDisplay = document.getElementById('currentKeyDisplay');
+        const fingerHint = document.getElementById('fingerHint');
         const keyElements = document.querySelectorAll('.key');
 
         // ============================================================
@@ -1844,19 +1971,19 @@
         });
 
         // ============================================================
-        //  熟悉键盘弹窗
+        //  熟悉键盘弹窗（含初始指法指导）
         // ============================================================
         keyboardPracticeBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             keyboardPracticeOverlay.classList.add('active');
-            // 重置高亮
+            // 重置高亮和提示
             keyElements.forEach(el => el.classList.remove('highlight'));
-            currentKeyDisplay.textContent = '按下按键试试';
+            currentKeyDisplay.innerHTML = '按下按键试试<span class="finger-hint" id="fingerHint"></span>';
+            fingerHint.textContent = '';
         });
 
         closePracticeBtn.addEventListener('click', function() {
             keyboardPracticeOverlay.classList.remove('active');
-            // 移除键盘监听
             document.removeEventListener('keydown', handleKeyPractice);
         });
 
@@ -1869,11 +1996,10 @@
 
         // 键盘练习的按键处理
         function handleKeyPractice(e) {
-            // 只处理字母键和空格
             const key = e.key.toLowerCase();
-            // 检查是否为字母 a-z 或空格
+            // 只处理字母和空格
             if ((key >= 'a' && key <= 'z') || key === ' ') {
-                // 找到对应的键元素
+                // 查找对应的键
                 let targetKey = null;
                 if (key === ' ') {
                     targetKey = document.querySelector('.key.space-key');
@@ -1885,19 +2011,28 @@
                 // 高亮当前按键
                 if (targetKey) {
                     targetKey.classList.add('highlight');
-                    // 滚动到可视区域（如果被遮挡）
                     targetKey.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    // 获取手指信息
+                    const finger = targetKey.dataset.finger || '';
+                    const displayKey = key === ' ' ? '空格键' : key.toUpperCase();
+                    // 更新显示
+                    currentKeyDisplay.innerHTML = `
+                        你按下了：<strong>${displayKey}</strong>
+                        <span class="finger-hint">应该用 <strong>${finger}</strong> 按这个键</span>
+                    `;
+                } else {
+                    // 如果按键不在键盘布局中（但理论上不会）
+                    currentKeyDisplay.innerHTML = `
+                        你按下了：<strong>${key.toUpperCase()}</strong>
+                        <span class="finger-hint">（此键不在练习范围内）</span>
+                    `;
                 }
-                // 显示当前按下的键
-                const displayText = key === ' ' ? '空格键' : key.toUpperCase();
-                currentKeyDisplay.textContent = `你按下了：${displayText}`;
                 e.preventDefault();
             }
         }
 
         // 打开弹窗时绑定键盘事件
         keyboardPracticeBtn.addEventListener('click', function() {
-            // 确保添加事件（但防止重复添加）
             document.removeEventListener('keydown', handleKeyPractice);
             document.addEventListener('keydown', handleKeyPractice);
         });
