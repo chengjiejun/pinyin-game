@@ -73,9 +73,35 @@
         .start-btn.sentences { background: #5cb85c; }
         .start-btn.articles { background: #f0ad4e; }
         .start-btn.letters { background: #b39ddb; }
-        .start-btn.tutorial { background: #ffb74d; color: #333; } /* 教程按钮用橙色 */
+        .start-btn.tutorial { background: #ffb74d; color: #333; }
 
-        /* 设置按钮（仅保留齿轮） */
+        /* 左上角按钮（熟悉键盘） */
+        .keyboard-practice-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: 2px solid #7f8c8d;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.7);
+        }
+        .keyboard-practice-btn:hover {
+            background: #e8f4f8;
+            border-color: #4a90d9;
+            color: #4a90d9;
+        }
+        .keyboard-practice-btn:active { transform: scale(0.95); }
+
+        /* 设置按钮（右上角齿轮） */
         .settings-btn {
             background: none;
             border: none;
@@ -239,6 +265,95 @@
             transition: background 0.2s;
         }
         .tutorial-modal .btn-close-tutorial:hover { background: #7f8c8d; }
+
+        /* ===== 熟悉键盘弹窗 ===== */
+        .keyboard-practice-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+        }
+        .keyboard-practice-overlay.active { display: flex; }
+        .keyboard-practice-modal {
+            background: white;
+            border-radius: 28px;
+            padding: 24px 20px 30px;
+            max-width: 700px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+        .keyboard-practice-modal h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+        .keyboard-practice-modal .subtitle {
+            font-size: 15px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+        .keyboard-practice-modal .current-key {
+            font-size: 48px;
+            font-weight: bold;
+            color: #4a90d9;
+            min-height: 60px;
+            margin-bottom: 10px;
+        }
+        .keyboard-practice-modal .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .keyboard-practice-modal .key {
+            min-width: 36px;
+            height: 44px;
+            border-radius: 6px;
+            border: 2px solid #ccc;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.15s;
+            user-select: none;
+            padding: 0 6px;
+            flex-shrink: 0;
+        }
+        .keyboard-practice-modal .key.highlight {
+            border-color: #4a90d9;
+            background: #d4e4f7;
+            color: #1a3a5a;
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(74,144,217,0.4);
+        }
+        .keyboard-practice-modal .key.space-key {
+            min-width: 120px;
+        }
+        .keyboard-practice-modal .btn-close-practice {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        .keyboard-practice-modal .btn-close-practice:hover { background: #7f8c8d; }
 
         /* 游戏界面样式 (保持不变) */
         .mode-title {
@@ -427,6 +542,9 @@
             .btn { font-size: 13px; padding: 6px 12px; min-width: 60px; }
             .mode-title { font-size: 16px; margin-bottom: 10px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            .keyboard-practice-btn { font-size: 14px; padding: 4px 10px; top: 6px; left: 6px; }
+            .keyboard-practice-modal .key { min-width: 28px; height: 36px; font-size: 14px; }
+            .keyboard-practice-modal .key.space-key { min-width: 80px; }
         }
         @media (max-width: 480px) {
             .char-item { width: 52px; min-height: 84px; padding: 2px 1px; }
@@ -439,6 +557,9 @@
             .start-btn { font-size: 18px; padding: 14px 0; }
             .modal .score-number { font-size: 38px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            .keyboard-practice-btn { font-size: 13px; padding: 4px 8px; top: 6px; left: 6px; }
+            .keyboard-practice-modal .key { min-width: 24px; height: 32px; font-size: 12px; }
+            .keyboard-practice-modal .key.space-key { min-width: 60px; }
         }
         @media (max-width: 380px) {
             .char-item { width: 44px; min-height: 74px; }
@@ -447,6 +568,8 @@
             .char-label { font-size: 18px; }
             .char-item.punct .char-label, .char-item.space .char-label { font-size: 18px; }
             .char-input { width: 40px; height: 30px; font-size: 14px; }
+            .keyboard-practice-modal .key { min-width: 20px; height: 28px; font-size: 11px; }
+            .keyboard-practice-modal .key.space-key { min-width: 50px; }
         }
     </style>
 </head>
@@ -454,6 +577,9 @@
     <div class="container">
         <!-- ===== 开始界面 ===== -->
         <div id="startPage">
+            <!-- 左上角：熟悉键盘按钮 -->
+            <button class="keyboard-practice-btn" id="keyboardPracticeBtn">⌨️ 熟悉键盘</button>
+
             <button class="settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
             <h1>📚 拼音小游戏</h1>
             <p>选择一种模式，开始挑战吧！</p>
@@ -524,6 +650,60 @@
             </div>
 
             <button class="btn-close-tutorial" id="closeTutorialBtn">我知道了，开始练习！</button>
+        </div>
+    </div>
+
+    <!-- ===== 熟悉键盘弹窗 ===== -->
+    <div class="keyboard-practice-overlay" id="keyboardPracticeOverlay">
+        <div class="keyboard-practice-modal">
+            <h2>⌨️ 熟悉键盘</h2>
+            <p class="subtitle">按下外接键盘上的任意字母键，看看它在哪里！</p>
+            <div class="current-key" id="currentKeyDisplay">按下按键试试</div>
+
+            <!-- 键盘布局（QWERTY 三行 + 空格） -->
+            <div id="keyboardContainer">
+                <!-- 第一行 -->
+                <div class="keyboard-row" id="row1">
+                    <span class="key" data-key="q">Q</span>
+                    <span class="key" data-key="w">W</span>
+                    <span class="key" data-key="e">E</span>
+                    <span class="key" data-key="r">R</span>
+                    <span class="key" data-key="t">T</span>
+                    <span class="key" data-key="y">Y</span>
+                    <span class="key" data-key="u">U</span>
+                    <span class="key" data-key="i">I</span>
+                    <span class="key" data-key="o">O</span>
+                    <span class="key" data-key="p">P</span>
+                </div>
+                <!-- 第二行 -->
+                <div class="keyboard-row" id="row2">
+                    <span class="key" data-key="a">A</span>
+                    <span class="key" data-key="s">S</span>
+                    <span class="key" data-key="d">D</span>
+                    <span class="key" data-key="f">F</span>
+                    <span class="key" data-key="g">G</span>
+                    <span class="key" data-key="h">H</span>
+                    <span class="key" data-key="j">J</span>
+                    <span class="key" data-key="k">K</span>
+                    <span class="key" data-key="l">L</span>
+                </div>
+                <!-- 第三行 -->
+                <div class="keyboard-row" id="row3">
+                    <span class="key" data-key="z">Z</span>
+                    <span class="key" data-key="x">X</span>
+                    <span class="key" data-key="c">C</span>
+                    <span class="key" data-key="v">V</span>
+                    <span class="key" data-key="b">B</span>
+                    <span class="key" data-key="n">N</span>
+                    <span class="key" data-key="m">M</span>
+                </div>
+                <!-- 空格键 -->
+                <div class="keyboard-row">
+                    <span class="key space-key" data-key=" ">空格</span>
+                </div>
+            </div>
+
+            <button class="btn-close-practice" id="closePracticeBtn">关闭</button>
         </div>
     </div>
 
@@ -1566,6 +1746,13 @@
         const tutorialOverlay = document.getElementById('tutorialOverlay');
         const closeTutorialBtn = document.getElementById('closeTutorialBtn');
 
+        // 熟悉键盘相关
+        const keyboardPracticeBtn = document.getElementById('keyboardPracticeBtn');
+        const keyboardPracticeOverlay = document.getElementById('keyboardPracticeOverlay');
+        const closePracticeBtn = document.getElementById('closePracticeBtn');
+        const currentKeyDisplay = document.getElementById('currentKeyDisplay');
+        const keyElements = document.querySelectorAll('.key');
+
         // ============================================================
         //  音乐控制
         // ============================================================
@@ -1654,6 +1841,65 @@
 
         tutorialOverlay.addEventListener('click', function(e) {
             if (e.target === this) tutorialOverlay.classList.remove('active');
+        });
+
+        // ============================================================
+        //  熟悉键盘弹窗
+        // ============================================================
+        keyboardPracticeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            keyboardPracticeOverlay.classList.add('active');
+            // 重置高亮
+            keyElements.forEach(el => el.classList.remove('highlight'));
+            currentKeyDisplay.textContent = '按下按键试试';
+        });
+
+        closePracticeBtn.addEventListener('click', function() {
+            keyboardPracticeOverlay.classList.remove('active');
+            // 移除键盘监听
+            document.removeEventListener('keydown', handleKeyPractice);
+        });
+
+        keyboardPracticeOverlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                keyboardPracticeOverlay.classList.remove('active');
+                document.removeEventListener('keydown', handleKeyPractice);
+            }
+        });
+
+        // 键盘练习的按键处理
+        function handleKeyPractice(e) {
+            // 只处理字母键和空格
+            const key = e.key.toLowerCase();
+            // 检查是否为字母 a-z 或空格
+            if ((key >= 'a' && key <= 'z') || key === ' ') {
+                // 找到对应的键元素
+                let targetKey = null;
+                if (key === ' ') {
+                    targetKey = document.querySelector('.key.space-key');
+                } else {
+                    targetKey = document.querySelector(`.key[data-key="${key}"]`);
+                }
+                // 清除所有高亮
+                keyElements.forEach(el => el.classList.remove('highlight'));
+                // 高亮当前按键
+                if (targetKey) {
+                    targetKey.classList.add('highlight');
+                    // 滚动到可视区域（如果被遮挡）
+                    targetKey.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }
+                // 显示当前按下的键
+                const displayText = key === ' ' ? '空格键' : key.toUpperCase();
+                currentKeyDisplay.textContent = `你按下了：${displayText}`;
+                e.preventDefault();
+            }
+        }
+
+        // 打开弹窗时绑定键盘事件
+        keyboardPracticeBtn.addEventListener('click', function() {
+            // 确保添加事件（但防止重复添加）
+            document.removeEventListener('keydown', handleKeyPractice);
+            document.addEventListener('keydown', handleKeyPractice);
         });
 
         // ============================================================
