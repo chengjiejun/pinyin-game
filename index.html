@@ -445,7 +445,7 @@
         }
         .btn-close-practice:hover { background: #7f8c8d; }
 
-        /* 游戏界面样式 (保持不变) */
+        /* ===== 游戏界面样式 ===== */
         .mode-title {
             text-align: center;
             font-size: 18px;
@@ -454,6 +454,7 @@
             margin-bottom: 16px;
             margin-top: 4px;
         }
+
         .char-grid {
             display: flex;
             flex-wrap: wrap;
@@ -465,6 +466,7 @@
             margin-bottom: 16px;
             min-height: 100px;
         }
+
         .char-item {
             display: flex;
             flex-direction: column;
@@ -498,6 +500,7 @@
             width: 20px;
             min-height: 96px;
         }
+
         .char-label {
             font-size: 26px;
             font-weight: 600;
@@ -512,6 +515,18 @@
             color: #999;
             font-weight: 400;
         }
+
+        /* 手指提示标签（字母练习专用） */
+        .finger-tip {
+            font-size: 11px;
+            color: #888;
+            margin: 2px 0;
+            text-align: center;
+            line-height: 1.2;
+            height: 16px;
+            white-space: nowrap;
+        }
+
         .char-input {
             width: 56px;
             height: 38px;
@@ -538,6 +553,7 @@
             border-color: #d9534f;
             background: #f8d7da;
         }
+
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -632,6 +648,7 @@
             .btn { font-size: 13px; padding: 6px 12px; min-width: 60px; }
             .mode-title { font-size: 16px; margin-bottom: 10px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            .finger-tip { font-size: 9px; height: 14px; }
             .keyboard-practice-btn { font-size: 14px; padding: 4px 10px; top: 6px; left: 6px; }
             .keyboard-practice-modal .key { min-width: 28px; height: 36px; font-size: 14px; }
             .keyboard-practice-modal .key.space-key { min-width: 80px; }
@@ -652,6 +669,7 @@
             .start-btn { font-size: 18px; padding: 14px 0; }
             .modal .score-number { font-size: 38px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            .finger-tip { font-size: 9px; height: 14px; }
             .keyboard-practice-btn { font-size: 13px; padding: 4px 8px; top: 6px; left: 6px; }
             .keyboard-practice-modal .key { min-width: 26px; height: 34px; font-size: 13px; }
             .keyboard-practice-modal .key.space-key { min-width: 60px; }
@@ -669,6 +687,7 @@
             .char-label { font-size: 18px; }
             .char-item.punct .char-label, .char-item.space .char-label { font-size: 18px; }
             .char-input { width: 40px; height: 30px; font-size: 14px; }
+            .finger-tip { font-size: 8px; height: 12px; }
             .keyboard-practice-modal .key { min-width: 22px; height: 30px; font-size: 11px; }
             .keyboard-practice-modal .key.space-key { min-width: 50px; }
             .keyboard-practice-modal .key .finger-label { font-size: 6px; }
@@ -1805,6 +1824,18 @@
         ];
 
         // ============================================================
+        //  手指映射（用于字母练习）
+        // ============================================================
+        const FINGER_MAP = {
+            'q': '左手小指', 'w': '左手无名指', 'e': '左手中指', 'r': '左手食指', 't': '左手食指',
+            'y': '右手食指', 'u': '右手食指', 'i': '右手中指', 'o': '右手无名指', 'p': '右手小指',
+            'a': '左手小指', 's': '左手无名指', 'd': '左手中指', 'f': '左手食指', 'g': '左手食指',
+            'h': '右手食指', 'j': '右手食指', 'k': '右手中指', 'l': '右手无名指',
+            'z': '左手小指', 'x': '左手无名指', 'c': '左手中指', 'v': '左手食指', 'b': '左手食指',
+            'n': '右手食指', 'm': '右手食指'
+        };
+
+        // ============================================================
         //  全局设置
         // ============================================================
         let keyboardEnabled = true;
@@ -2145,13 +2176,24 @@
             gridEl.innerHTML = '';
 
             if (currentMode === 'letters') {
+                // 字母练习：每个字母显示手指提示
                 for (let i = 0; i < chars.length; i++) {
                     const ch = chars[i];
                     const div = document.createElement('div');
                     div.className = 'char-item';
+
+                    // 字母标签
                     const label = document.createElement('div');
                     label.className = 'char-label';
                     label.textContent = ch;
+
+                    // 手指提示（使用 FINGER_MAP）
+                    const fingerTip = document.createElement('div');
+                    fingerTip.className = 'finger-tip';
+                    const fingerName = FINGER_MAP[ch] || '';
+                    fingerTip.textContent = fingerName;
+
+                    // 输入框
                     const input = document.createElement('input');
                     input.className = 'char-input';
                     input.type = 'text';
@@ -2162,6 +2204,7 @@
                     const parts = splitPinyinInput(saved);
                     if (i < parts.length) input.value = parts[i];
 
+                    // 输入事件：自动跳转
                     input.addEventListener('input', function(e) {
                         const val = this.value.trim();
                         if (val.length >= 1) {
@@ -2199,10 +2242,12 @@
                     });
 
                     div.appendChild(label);
+                    div.appendChild(fingerTip);
                     div.appendChild(input);
                     gridEl.appendChild(div);
                 }
             } else {
+                // 非字母模式：原有逻辑（含标点、空格等）
                 const fullText = getCurrentItem();
                 for (let i = 0; i < fullText.length; i++) {
                     const ch = fullText[i];
