@@ -72,7 +72,8 @@
         .start-btn.words { background: #5bc0de; }
         .start-btn.sentences { background: #5cb85c; }
         .start-btn.articles { background: #f0ad4e; }
-        .start-btn.letters { background: #b39ddb; } /* 紫色调 */
+        .start-btn.letters { background: #b39ddb; }
+        .start-btn.tutorial { background: #ffb74d; color: #333; } /* 教程按钮用橙色 */
 
         /* 设置按钮（仅保留齿轮） */
         .settings-btn {
@@ -164,7 +165,82 @@
             margin-top: 8px;
         }
 
-        /* 游戏界面 */
+        /* 教程弹窗 */
+        .tutorial-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+        .tutorial-overlay.active { display: flex; }
+        .tutorial-modal {
+            background: white;
+            border-radius: 28px;
+            padding: 30px 24px 24px;
+            max-width: 420px;
+            width: 92%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        }
+        .tutorial-modal h2 {
+            font-size: 26px;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .tutorial-modal h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin: 16px 0 8px 0;
+            border-bottom: 2px solid #e8f4f8;
+            padding-bottom: 4px;
+        }
+        .tutorial-modal p {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.7;
+            margin: 6px 0;
+        }
+        .tutorial-modal ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .tutorial-modal ul li {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 4px;
+        }
+        .tutorial-modal .highlight {
+            background: #f0f7ff;
+            border-left: 4px solid #4a90d9;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .tutorial-modal .btn-close-tutorial {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .tutorial-modal .btn-close-tutorial:hover { background: #7f8c8d; }
+
+        /* 游戏界面样式 (保持不变) */
         .mode-title {
             text-align: center;
             font-size: 18px;
@@ -173,7 +249,6 @@
             margin-bottom: 16px;
             margin-top: 4px;
         }
-
         .char-grid {
             display: flex;
             flex-wrap: wrap;
@@ -185,7 +260,6 @@
             margin-bottom: 16px;
             min-height: 100px;
         }
-
         .char-item {
             display: flex;
             flex-direction: column;
@@ -219,7 +293,6 @@
             width: 20px;
             min-height: 96px;
         }
-
         .char-label {
             font-size: 26px;
             font-weight: 600;
@@ -234,7 +307,6 @@
             color: #999;
             font-weight: 400;
         }
-
         .char-input {
             width: 56px;
             height: 38px;
@@ -261,7 +333,6 @@
             border-color: #d9534f;
             background: #f8d7da;
         }
-
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -291,7 +362,7 @@
         .btn-orange { background: #e67e22; }
         .btn-home { background: #95a5a6; }
 
-        /* 弹窗 */
+        /* 弹窗（得分/错题） */
         .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index:999; }
         .overlay.active { display: flex; }
         .modal {
@@ -357,8 +428,6 @@
             .mode-title { font-size: 16px; margin-bottom: 10px; }
             #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
         }
-
-        /* 响应式 */
         @media (max-width: 480px) {
             .char-item { width: 52px; min-height: 84px; padding: 2px 1px; }
             .char-item.punct { width: 32px; min-height: 84px; }
@@ -392,18 +461,19 @@
             <button class="start-btn sentences" data-mode="sentences">📖 句子练习</button>
             <button class="start-btn articles" data-mode="articles">📄 文章练习</button>
             <button class="start-btn letters" data-mode="letters">🔤 字母练习</button>
+            <button class="start-btn tutorial" id="tutorialBtn">📖 玩法教程</button>
         </div>
 
         <!-- ===== 游戏界面 ===== -->
         <div id="gamePage">
             <button class="settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
-            <div class="mode-title" id="modeTitle">字母练习</div>
+            <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
             <div id="charGrid" class="char-grid"></div>
             <div class="btn-group" id="btnGroup"></div>
         </div>
     </div>
 
-    <!-- ===== 设置弹窗（包含键盘和音乐控制） ===== -->
+    <!-- ===== 设置弹窗 ===== -->
     <div class="settings-overlay" id="settingsOverlay">
         <div class="settings-modal">
             <h2>⚙️ 设置</h2>
@@ -419,6 +489,41 @@
                 <button class="btn btn-music-off" id="disableMusicBtn">🔇 关闭音乐</button>
             </div>
             <button class="btn-close" id="closeSettingsBtn">关闭</button>
+        </div>
+    </div>
+
+    <!-- ===== 教程弹窗 ===== -->
+    <div class="tutorial-overlay" id="tutorialOverlay">
+        <div class="tutorial-modal">
+            <h2>📖 玩法教程</h2>
+            <p style="text-align:center; color:#888; margin-bottom:12px;">四种练习模式，轻松掌握拼音和字母！</p>
+
+            <h3>📝 词语练习</h3>
+            <p>系统随机抽取 <strong>5 个词语</strong>（含常见汉字）。你需要为每个汉字输入正确的 <strong>拼音</strong>（不带声调）。每输入完一个词语后，点击 <strong>“下一个”</strong> 继续，全部完成后点击 <strong>“提交答案”</strong> 查看得分和错题。</p>
+
+            <h3>📖 句子练习</h3>
+            <p>系统随机抽取 <strong>3 个句子</strong>。你需要为句子中的每个汉字输入拼音。标点符号不参与计分，只作为提示。操作方式与词语练习相同。</p>
+
+            <h3>📄 文章练习</h3>
+            <p>系统随机抽取 <strong>一篇文章</strong>（约 100～200 字）。你需要为文中的所有汉字输入拼音。标点和空格不参与计分。文章模式下无需翻页，直接提交整篇文章的拼音。</p>
+
+            <h3>🔤 字母练习</h3>
+            <p>系统会随机生成 <strong>3 组字母</strong>，每组 10 个（共 30 个）。你需要输入对应的小写字母。输入一个字母后，光标<strong>自动跳转到下一个</strong>，无需按空格或回车。前两组完成后点击 <strong>“下一个”</strong>，最后一组点击 <strong>“提交答案”</strong>。</p>
+
+            <h3>🎮 通用操作指南</h3>
+            <ul>
+                <li><strong>输入</strong>：在输入框中键入拼音或字母。如果连接了物理键盘，可使用 <kbd>↑</kbd> <kbd>↓</kbd> 或 <kbd>空格</kbd> 在输入框间跳转，按 <kbd>Enter</kbd> 快速提交。</li>
+                <li><strong>得分</strong>：每次提交后会显示正确数和总分。得分 = (正确字数 / 总字数) × 100%。</li>
+                <li><strong>错题本</strong>：提交后如果有错误，可点击 <strong>“查看错题”</strong> 查看正确答案和你的输入。</li>
+                <li><strong>设置</strong>：右上角齿轮可开关手机虚拟键盘或背景音乐。</li>
+                <li><strong>PWA 支持</strong>：添加到主屏幕后，可离线使用，全屏无干扰。</li>
+            </ul>
+
+            <div class="highlight">
+                💡 <strong>小贴士</strong>：如果使用外接键盘，建议在设置中 <strong>关闭手机键盘</strong>，避免遮挡屏幕。
+            </div>
+
+            <button class="btn-close-tutorial" id="closeTutorialBtn">我知道了，开始练习！</button>
         </div>
     </div>
 
@@ -1456,6 +1561,11 @@
         const disableMusicBtn = document.getElementById('disableMusicBtn');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
+        // 教程相关
+        const tutorialBtn = document.getElementById('tutorialBtn');
+        const tutorialOverlay = document.getElementById('tutorialOverlay');
+        const closeTutorialBtn = document.getElementById('closeTutorialBtn');
+
         // ============================================================
         //  音乐控制
         // ============================================================
@@ -1531,19 +1641,33 @@
         });
 
         // ============================================================
+        //  教程弹窗
+        // ============================================================
+        tutorialBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            tutorialOverlay.classList.add('active');
+        });
+
+        closeTutorialBtn.addEventListener('click', function() {
+            tutorialOverlay.classList.remove('active');
+        });
+
+        tutorialOverlay.addEventListener('click', function(e) {
+            if (e.target === this) tutorialOverlay.classList.remove('active');
+        });
+
+        // ============================================================
         //  游戏核心函数
         // ============================================================
         function getPool() {
             if (currentMode === 'words') return WORDS_POOL;
             if (currentMode === 'sentences') return SENTENCES_POOL;
             if (currentMode === 'articles') return ARTICLES_POOL;
-            // letters 模式不用池，直接生成
             return null;
         }
 
         function generateBatch() {
             if (currentMode === 'letters') {
-                // 生成 3 组，每组 10 个随机小写字母
                 const letters = 'abcdefghijklmnopqrstuvwxyz';
                 batchItems = [];
                 for (let group = 0; group < 3; group++) {
@@ -1569,11 +1693,10 @@
 
         function getCurrentItem() { return batchItems[batchIndex] || ''; }
 
-        // 获取当前项需要显示的字符列表（字母模式直接返回字符串数组，其他模式返回有效汉字）
         function getCurrentChars() {
             const item = getCurrentItem();
             if (currentMode === 'letters') {
-                return item.split(''); // 每个字母单独显示
+                return item.split('');
             }
             return getValidChars(item);
         }
@@ -1593,7 +1716,7 @@
         }
 
         // ============================================================
-        //  计分（统一处理，字母模式特殊比较）
+        //  计分
         // ============================================================
         function calculateScore(items, answers) {
             let correct = 0, errors = [], total = 0;
@@ -1611,7 +1734,6 @@
                     const ch = chars[j];
                     let correctChar = ch;
                     let userChar = (j < parts.length) ? parts[j].toLowerCase() : '';
-                    // 字母模式直接比较字符
                     if (currentMode === 'letters') {
                         if (userChar === correctChar) correct++;
                         else errors.push({ char: correctChar, correct: correctChar, user: userChar });
@@ -1642,7 +1764,6 @@
             gridEl.innerHTML = '';
 
             if (currentMode === 'letters') {
-                // 字母模式：直接显示字母，每个字母一个输入框
                 for (let i = 0; i < chars.length; i++) {
                     const ch = chars[i];
                     const div = document.createElement('div');
@@ -1656,25 +1777,20 @@
                     input.maxLength = 1;
                     input.inputMode = keyboardEnabled ? 'text' : 'none';
                     input.dataset.idx = i;
-                    // 恢复答案
                     const saved = batchAnswers[batchIndex] || '';
                     const parts = splitPinyinInput(saved);
                     if (i < parts.length) input.value = parts[i];
 
-                    // 自动跳转：输入一个字符后自动跳到下一个输入框
                     input.addEventListener('input', function(e) {
                         const val = this.value.trim();
                         if (val.length >= 1) {
-                            // 只保留最后一个字符（如果是粘贴多个）
                             this.value = val.slice(-1);
-                            // 自动跳到下一个
                             const inputs = gridEl.querySelectorAll('.char-input');
                             const idx = parseInt(this.dataset.idx);
                             if (idx + 1 < inputs.length) {
                                 inputs[idx + 1].focus();
                             }
                         }
-                        // 实时反馈（字母模式直接比较）
                         const correct = ch;
                         const user = this.value.trim().toLowerCase();
                         this.classList.remove('correct', 'wrong');
@@ -1685,7 +1801,6 @@
                         }
                     });
 
-                    // 键盘支持左右跳转
                     input.addEventListener('keydown', function(e) {
                         const inputs = gridEl.querySelectorAll('.char-input');
                         const idx = parseInt(this.dataset.idx);
@@ -1707,7 +1822,6 @@
                     gridEl.appendChild(div);
                 }
             } else {
-                // 非字母模式：原有逻辑（含标点、空格等）
                 const fullText = getCurrentItem();
                 for (let i = 0; i < fullText.length; i++) {
                     const ch = fullText[i];
@@ -1739,7 +1853,6 @@
                         continue;
                     }
 
-                    // 正常汉字
                     const label = document.createElement('div');
                     label.className = 'char-label';
                     label.textContent = ch;
@@ -1797,7 +1910,6 @@
                 }
             }
 
-            // 聚焦第一个输入框
             const firstInput = gridEl.querySelector('.char-input');
             if (firstInput) setTimeout(() => firstInput.focus(), 100);
 
@@ -1822,7 +1934,6 @@
             homeBtn.addEventListener('click', goHome);
             btnGroup.appendChild(homeBtn);
 
-            // 字母模式特殊处理：只有3组，最后一组显示提交
             if (currentMode === 'letters') {
                 const isLast = (batchIndex === batchItems.length - 1);
                 if (isLast) {
@@ -1844,7 +1955,6 @@
                 return;
             }
 
-            // 其他模式（词语、句子、文章）
             if (currentMode === 'articles') {
                 const submitBtn = document.createElement('button');
                 submitBtn.className = 'btn btn-success';
@@ -1968,7 +2078,7 @@
         // ============================================================
         //  事件绑定
         // ============================================================
-        document.querySelectorAll('.start-btn').forEach(btn => {
+        document.querySelectorAll('.start-btn:not(#tutorialBtn)').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 if (!isMusicPlaying) {
                     playMusic();
