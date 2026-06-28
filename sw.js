@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pinyin-game-v2';
+const CACHE_NAME = 'pinyin-game-v1';
 const urlsToCache = [
   './',
   './index.html',
