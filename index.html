@@ -73,33 +73,35 @@
         .start-btn.sentences { background: #5cb85c; }
         .start-btn.articles { background: #f0ad4e; }
 
-        /* 设置按钮 */
-        .settings-btn {
+        /* 顶部按钮（设置 + 音乐） */
+        .top-btn {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 26px;
             cursor: pointer;
             color: #7f8c8d;
             transition: transform 0.2s;
-            padding: 4px 8px;
+            padding: 4px 6px;
             line-height: 1;
         }
-        .settings-btn:hover { transform: rotate(60deg); }
-        .settings-btn:active { transform: scale(0.9); }
+        .top-btn:hover { transform: scale(1.1); }
+        .top-btn:active { transform: scale(0.9); }
 
-        #startPage .settings-btn {
+        #startPage .top-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
         }
+        #startPage .settings-btn { right: 10px; }
+        #startPage .music-btn { right: 60px; }
 
-        #gamePage .settings-btn {
+        #gamePage .top-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
-            font-size: 24px;
+            font-size: 22px;
             color: #4a90d9;
         }
+        #gamePage .settings-btn { right: 10px; }
+        #gamePage .music-btn { right: 50px; }
 
         #gamePage {
             display: none;
@@ -358,7 +360,9 @@
             .char-grid { padding: 10px 8px; gap: 4px 6px; }
             .btn { font-size: 13px; padding: 6px 12px; min-width: 60px; }
             .mode-title { font-size: 16px; margin-bottom: 10px; }
-            #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            #gamePage .top-btn { font-size: 18px; top: 6px; }
+            #gamePage .settings-btn { right: 6px; }
+            #gamePage .music-btn { right: 44px; }
         }
 
         /* 响应式 */
@@ -372,7 +376,9 @@
             .btn { font-size: 13px; padding: 8px 12px; min-width: 60px; }
             .start-btn { font-size: 18px; padding: 14px 0; }
             .modal .score-number { font-size: 38px; }
-            #gamePage .settings-btn { font-size: 20px; top: 6px; right: 6px; }
+            #gamePage .top-btn { font-size: 18px; top: 6px; }
+            #gamePage .settings-btn { right: 6px; }
+            #gamePage .music-btn { right: 44px; }
         }
         @media (max-width: 380px) {
             .char-item { width: 44px; min-height: 74px; }
@@ -388,7 +394,8 @@
     <div class="container">
         <!-- ===== 开始界面 ===== -->
         <div id="startPage">
-            <button class="settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
+            <button class="top-btn music-btn" id="musicToggleBtn" title="音乐开关">🔇</button>
+            <button class="top-btn settings-btn" id="settingsToggleBtn" title="设置">⚙️</button>
             <h1>📚 拼音小游戏</h1>
             <p>选择一种模式，开始挑战吧！</p>
             <button class="start-btn words" data-mode="words">📝 词语练习</button>
@@ -398,7 +405,8 @@
 
         <!-- ===== 游戏界面 ===== -->
         <div id="gamePage">
-            <button class="settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
+            <button class="top-btn music-btn" id="musicToggleBtnGame" title="音乐开关">🔇</button>
+            <button class="top-btn settings-btn" id="settingsToggleBtnGame" title="设置">⚙️</button>
             <div class="mode-title" id="modeTitle">词语练习 (5个一组)</div>
             <div id="charGrid" class="char-grid"></div>
             <div class="btn-group" id="btnGroup"></div>
@@ -441,6 +449,12 @@
             <button class="btn btn-home" style="width:100%; margin-top:16px;" id="closeWrongBtn">关闭</button>
         </div>
     </div>
+
+    <!-- ===== 背景音乐 ===== -->
+    <audio id="bgm" loop preload="auto">
+        <source src="bgm.mp3" type="audio/mpeg">
+        您的浏览器不支持 audio 标签。
+    </audio>
 
     <script>
 
@@ -1387,6 +1401,7 @@
         //  全局设置
         // ============================================================
         let keyboardEnabled = true;
+        let isMusicPlaying = false;
 
         // ============================================================
         //  工具函数
@@ -1432,6 +1447,11 @@
         const closeWrongBtn = document.getElementById('closeWrongBtn');
         let currentWrongList = [];
 
+        // 音乐相关
+        const bgmAudio = document.getElementById('bgm');
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+        const musicToggleBtnGame = document.getElementById('musicToggleBtnGame');
+
         // 设置相关
         const settingsToggleBtn = document.getElementById('settingsToggleBtn');
         const settingsToggleBtnGame = document.getElementById('settingsToggleBtnGame');
@@ -1439,6 +1459,41 @@
         const enableKeyboardBtn = document.getElementById('enableKeyboardBtn');
         const disableKeyboardBtn = document.getElementById('disableKeyboardBtn');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+
+        // ============================================================
+        //  音乐控制（按钮控制播放/暂停）
+        // ============================================================
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgmAudio.pause();
+                isMusicPlaying = false;
+                updateMusicIcon();
+            } else {
+                bgmAudio.play().then(() => {
+                    isMusicPlaying = true;
+                    updateMusicIcon();
+                }).catch((error) => {
+                    console.log('播放失败:', error);
+                    alert('⚠️ 无法播放音乐，请检查 bgm.mp3 是否已上传');
+                });
+            }
+        }
+
+        function updateMusicIcon() {
+            const icon = isMusicPlaying ? '🔊' : '🔇';
+            musicToggleBtn.textContent = icon;
+            musicToggleBtnGame.textContent = icon;
+        }
+
+        musicToggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMusic();
+        });
+
+        musicToggleBtnGame.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleMusic();
+        });
 
         // ============================================================
         //  设置面板
@@ -1810,27 +1865,6 @@
         // 初始显示主页
         startPage.style.display = 'flex';
         gamePage.style.display = 'none';
-    </script>
-
-    <!-- ===== 背景音乐 ===== -->
-    <audio id="bgm" loop preload="auto">
-        <source src="bgm.mp3" type="audio/mpeg">
-        您的浏览器不支持 audio 标签。
-    </audio>
-    <script>
-        // 用户首次点击页面任意位置时播放音乐（绕过浏览器自动播放限制）
-        document.addEventListener('click', function playBgm() {
-            var audio = document.getElementById('bgm');
-            if (audio.paused) {
-                audio.play().then(function() {
-                    console.log('🎵 背景音乐已开始播放');
-                }).catch(function(error) {
-                    console.log('播放失败:', error);
-                });
-            }
-            // 播放后移除监听，避免重复触发
-            document.removeEventListener('click', playBgm);
-        });
     </script>
 </body>
 </html>
