@@ -1811,5 +1811,26 @@
         startPage.style.display = 'flex';
         gamePage.style.display = 'none';
     </script>
+
+    <!-- ===== 背景音乐 ===== -->
+    <audio id="bgm" loop preload="auto">
+        <source src="bgm.mp3" type="audio/mpeg">
+        您的浏览器不支持 audio 标签。
+    </audio>
+    <script>
+        // 用户首次点击页面任意位置时播放音乐（绕过浏览器自动播放限制）
+        document.addEventListener('click', function playBgm() {
+            var audio = document.getElementById('bgm');
+            if (audio.paused) {
+                audio.play().then(function() {
+                    console.log('🎵 背景音乐已开始播放');
+                }).catch(function(error) {
+                    console.log('播放失败:', error);
+                });
+            }
+            // 播放后移除监听，避免重复触发
+            document.removeEventListener('click', playBgm);
+        });
+    </script>
 </body>
 </html>
