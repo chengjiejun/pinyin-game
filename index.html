@@ -83,20 +83,14 @@
             transition: transform 0.2s;
             padding: 4px 8px;
             line-height: 1;
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
         .settings-btn:hover { transform: rotate(60deg); }
         .settings-btn:active { transform: scale(0.9); }
 
-        #startPage .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
         #gamePage .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             font-size: 24px;
             color: #4a90d9;
         }
@@ -1470,7 +1464,7 @@
                 console.log('🎵 音乐已开启');
             }).catch((error) => {
                 console.log('播放失败:', error);
-                alert('⚠️ 无法播放音乐，请检查 bgm.mp3 是否已上传，或点击页面任意位置重试');
+                // alert('⚠️ 无法播放音乐，请检查 bgm.mp3 是否已上传，或点击页面任意位置重试');
             });
         }
 
@@ -1479,15 +1473,6 @@
             bgmAudio.pause();
             isMusicPlaying = false;
             console.log('🔇 音乐已关闭');
-        }
-
-        // 切换音乐状态（开启/关闭）
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                pauseMusic();
-            } else {
-                playMusic();
-            }
         }
 
         // 开启音乐按钮
@@ -1515,15 +1500,6 @@
             }
             document.removeEventListener('click', firstClick);
         }, { once: true });
-
-        // 另外，当用户点击“开始游戏”按钮时，也尝试播放（确保音乐能启动）
-        document.querySelectorAll('.start-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (!isMusicPlaying) {
-                    playMusic();
-                }
-            });
-        });
 
         // ============================================================
         //  设置面板
@@ -1864,10 +1840,22 @@
         }
 
         // ============================================================
-        //  事件绑定
+        //  ★★★ 核心修复：确保三个模式按钮绑定事件 ★★★
         // ============================================================
-        // 开始按钮已在上方绑定，这里不再重复
+        document.querySelectorAll('.start-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // 同时触发音乐播放（如果未播放）
+                if (!isMusicPlaying) {
+                    playMusic();
+                }
+                // 跳转到游戏
+                startGame(this.dataset.mode);
+            });
+        });
 
+        // ============================================================
+        //  其他事件绑定
+        // ============================================================
         viewWrongBtn.addEventListener('click', showWrongList);
         closeWrongBtn.addEventListener('click', closeWrong);
         closeScoreBtn.addEventListener('click', closeScore);
